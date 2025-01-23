@@ -1,52 +1,123 @@
-from lark import Lark, Transformer, v_args
-from lexer import IntToken, FloatToken, StringToken, OperatorToken
-from ast_class import AST, BinOp, Number
+from tree import AST, BinOp, Number, If
+from lexer import lex, ParseError, Token, IntToken, FloatToken, StringToken, OperatorToken, KeywordToken
+from more_itertools import peekable
 
-# Grammar definition for parsing arithmetic expressions
-grammar = """
-    ?start: expr
-    ?expr: term
-         | expr "+" term   -> add
-         | expr "-" term   -> sub
-    ?term: factor
-         | term "*" factor -> mul
-         | term "/" factor -> div
-    ?factor: atom
-           | factor "^" atom -> pow
-    ?atom: NUMBER           -> number
-         | "(" expr ")"
-    %import common.NUMBER
-    %import common.WS_INLINE
-    %ignore WS_INLINE
-"""
+def parse(s: str) -> AST:
+    t = peekable(lex(s))
+    
+    def expect(what: Token):
+        if t.peek(None) == what:
+            next(t)
+            return
+        raise ParseError
+    
+    def parse_braced_expr():
+        expect(OperatorToken('{'))
+        expr = parse_if()
+        expect(OperatorToken('}'))
+        return expr
 
-# Define the parser using Lark
-parser = Lark(grammar, parser='lalr', transformer=None)
+    def parse_if():
+        match t.peek(None):
+            case KeywordToken("if"):
+                next(t)
+                cond = parse_braced_expr()
+                expect(KeywordToken("then"))
+                then = parse_braced_expr()
+                expect(KeywordToken("else"))
+                else_ = parse_braced_expr()
+                expect(KeywordToken("end"))
+                return If(cond, then, else_)
+            case _:
+                return parse_cmp()
 
-# Transformer to convert parse tree into an AST
-class ASTTransformer(Transformer):
-    @v_args(inline=True)
-    def add(self, left, right):
-        return BinOp('+', left, right)
+    def parse_cmp():
+        l = parse_sub()
+        if t.peek(None) == OperatorToken('<'):
+            next(t)
+            r = parse_sub()
+            return BinOp('<', l, r)
+        elif t.peek(None) == OperatorToken('>'):
+            next(t)
+            r = parse_sub()
+            return BinOp('>', l, r)
+        elif t.peek(None) == OperatorToken('=='):
+            next(t)
+            r = parse_sub()
+            return BinOp('==', l, r)
+        else:
+            return l
 
-    def sub(self, left, right):
-        return BinOp('-', left, right)
+    def parse_sub():
+        ast = parse_add()
+        while True:
+            match t.peek(None):
+                case OperatorToken('-'):
+                    next(t)
+                    ast = BinOp('-', ast, parse_add())
+                case _:
+                    return ast
+                    
+    def parse_add():
+        ast = parse_mul()
+        while True:
+            match t.peek(None):
+                case OperatorToken('+'):
+                    next(t)
+                    ast = BinOp('+', ast, parse_mul())
+                case _:
+                    return ast
 
-    def mul(self, left, right):
-        return BinOp('*', left, right)
+    def parse_mul():
+        ast = parse_div()
+        while True:
+            match t.peek(None):
+                case OperatorToken('*'):
+                    next(t)
+                    ast = BinOp("*", ast, parse_div())
+                case _:
+                    return ast
+    
+    def parse_div():
+        ast = parse_pow()
+        match t.peek(None):
+            case OperatorToken('/'):
+                next(t)
+                ast = BinOp("/", ast, parse_div())
+        return ast
+    
+    def parse_pow():
+        ast = parse_atom()
+        match t.peek(None):
+            case OperatorToken('^'):
+                next(t)
+                ast = BinOp("^", ast, parse_pow())
+        return ast
 
-    def div(self, left, right):
-        return BinOp('/', left, right)
+    def parse_atom():
+        match t.peek(None):
+            case IntToken(v):
+                next(t)
+                return Number(IntToken(v))
+            case FloatToken(v):
+                next(t)
+                return Number(FloatToken(v))
+            case StringToken(v):
+                next(t)
+                return Number(StringToken(v))
+            case OperatorToken('('):
+                next(t)
+                expr = parse_sub()  # Parse the expression inside the parentheses
+                match t.peek(None):
+                    case OperatorToken(')'):
+                        next(t)
+                        return expr
+                    case _:
+                        raise ValueError("Missing closing parenthesis")
+            case _:
+                raise ValueError("Unexpected token in expression")
 
-    def pow(self, left, right):
-        return BinOp('^', left, right)
-
-    def number(self, value):
-        if '.' in value:  # Handle FloatToken
-            return Number(FloatToken(float(value)))
-        return Number(IntToken(int(value)))  # Handle IntToken
-
-# Parse function using Lark and the transformer
-def parse(expression):
-    tree = parser.parse(expression)
-    return ASTTransformer().transform(tree)
+    result = parse_if()
+    if result is None:
+        raise ValueError("Invalid syntax")
+    return result

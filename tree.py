@@ -1,6 +1,5 @@
-import ast
 from dataclasses import dataclass
-from lexer import IntToken, FloatToken, StringToken
+from lexer import IntToken, FloatToken, StringToken, BoolToken
 
 # Abstract Syntax Tree classes
 class AST:
@@ -11,10 +10,12 @@ class BinOp(AST):
     op: str
     left: AST
     right: AST
+    _fields = ('op', 'left', 'right')
 
 @dataclass
 class Number(AST):
-    val: IntToken | FloatToken | StringToken
+    v: IntToken | FloatToken | StringToken
+    _fields = ('val',)
 
 @dataclass
 class If(AST):
@@ -22,69 +23,67 @@ class If(AST):
     t: AST
     e: AST
 
-# Evaluator function
-def evaluate_ast(tree: AST):
-    """
-    Evaluates a custom AST using Python's ast module and handles custom tokens.
-    """
+def e(tree: AST) -> IntToken | FloatToken | StringToken | BoolToken :
     match tree:
-        case Number(val):
-            return val
-        case BinOp(op, left, right):
-            left_val = evaluate_ast(left)
-            right_val = evaluate_ast(right)
-
-            if isinstance(left_val, (IntToken, FloatToken)) and isinstance(right_val, (IntToken, FloatToken)):
-                # Numeric operations
-                left_value = left_val.value
-                right_value = right_val.value
-
-                if isinstance(left_val, FloatToken) or isinstance(right_val, FloatToken):
-                    result = eval_math(op, float(left_value), float(right_value))
-                    return FloatToken(result)
-                result = eval_math(op, int(left_value), int(right_value))
-                return IntToken(result)
-
-            elif isinstance(left_val, StringToken) and isinstance(right_val, StringToken):
-                # String concatenation
-                if op == "+":
-                    return StringToken(left_val.value + right_val.value)
-                raise TypeError(f"Unsupported operation: {op} for strings")
-
-            elif isinstance(left_val, StringToken) and isinstance(right_val, IntToken):
-                # String repetition
-                if op == "*":
-                    return StringToken(left_val.value * right_val.value)
-                raise TypeError(f"Unsupported operation: {op} for string and int")
-            
+        case Number(v):
+            return v
+        case BinOp("+", l, r):
+            left = e(l)
+            right = e(r)
+            if isinstance(left, (IntToken, FloatToken)) and isinstance(right, (IntToken, FloatToken)):
+                if isinstance(left, FloatToken) or isinstance(right, FloatToken):
+                    return FloatToken(left.v + right.v)
+                return IntToken(left.v + right.v)
+            elif isinstance(left, StringToken) and isinstance(right, StringToken):
+                return StringToken(left.v + right.v)
             else:
-                raise TypeError(f"Incompatible types: {type(left_val).__name__} and {type(right_val).__name__}")
-
-        case If(c, t, e):
-            cond = evaluate_ast(c)
-            if isinstance(cond, BoolToken) and cond.value:
-                return evaluate_ast(t)
-            return evaluate_ast(e)
+                raise TypeError(f"Invalid operation: {type(left).__name__} + {type(right).__name__}")
+        case BinOp("*", l, r):
+            left = e(l)
+            right = e(r)
+            if isinstance(left, StringToken) and isinstance(right, IntToken):
+                return StringToken(left.v * right.v)
+            elif isinstance(left, IntToken) and isinstance(right, StringToken):
+                return StringToken(right.v * left.v)
+            elif isinstance(left, (IntToken, FloatToken)) and isinstance(right, (IntToken, FloatToken)):
+                if isinstance(left, FloatToken) or isinstance(right, FloatToken):
+                    return FloatToken(left.v * right.v)
+                return IntToken(left.v * right.v)
+            else:
+                raise TypeError(f"Invalid operation: {type(left).__name__} * {type(right).__name__}")
+        case BinOp("-", l, r):
+            left = e(l)
+            right = e(r)
+            if isinstance(left, (IntToken, FloatToken)) and isinstance(right, (IntToken, FloatToken)):
+                if isinstance(left, FloatToken) or isinstance(right, FloatToken):
+                    return FloatToken(left.v - right.v)
+                return IntToken(left.v - right.v)
+            else:
+                raise TypeError(f"Invalid operation: {type(left).__name__} - {type(right).__name__}")
+        case BinOp("/", l, r):
+            left = e(l)
+            right = e(r)
+            if isinstance(left, (IntToken, FloatToken)) and isinstance(right, (IntToken, FloatToken)):
+                if right.v == 0:
+                    raise ZeroDivisionError("Division by zero")
+                return FloatToken(left.v / right.v)
+            else:
+                raise TypeError(f"Invalid operation: {type(left).__name__} / {type(right).__name__}")
+        case BinOp("^", l, r):
+            left = e(l)
+            right = e(r)
+            if isinstance(left, (IntToken, FloatToken)) and isinstance(right, (IntToken, FloatToken)):
+                if isinstance(left, FloatToken) or isinstance(right, FloatToken):
+                    return FloatToken(left.v ** right.v)
+                return IntToken(left.v ** right.v)
+            else:
+                raise TypeError(f"Invalid operation: {type(left).__name__} ^ {type(right).__name__}")
+        case BinOp("<", l, r): return BoolToken(e(l) < e(r))
+        case If(cond, then, else_):
+            if e(cond):
+                return e(then)
+            else:
+                return e(else_)
         case _:
             raise ValueError("Unknown AST node")
 
-def eval_math(op: str, left: float, right: float) -> float:
-    """
-    Uses Python's ast module to safely evaluate mathematical operations.
-    """
-    # Define a mapping for operators
-    allowed_ops = {
-        "+": ast.Add,
-        "-": ast.Sub,
-        "*": ast.Mult,
-        "/": ast.Div,
-        "^": ast.Pow,
-    }
-    if op not in allowed_ops:
-        raise ValueError(f"Unsupported operator: {op}")
-    # Create an AST node and evaluate it
-    operation = allowed_ops[op]()
-    binop_node = ast.BinOp(
-        left=ast.Constant(left), op=operation, right=ast.Constant(right)
-    )
-    return eval(compile(ast.Expression(binop_node), filename="<ast>", mode="eval"))

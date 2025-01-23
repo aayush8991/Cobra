@@ -1,6 +1,10 @@
 from dataclasses import dataclass
 from collections.abc import Iterator
 
+class ParseError(Exception):
+    """Exception raised for errors in the parsing process."""
+    pass
+
 class Token:
     pass
 
