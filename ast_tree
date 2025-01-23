@@ -1,0 +1,15 @@
+digraph {
+	node0 [label="BinOp(+)"]
+	node1 [label="Number(IntToken(v=2))"]
+	node0 -> node1
+	node2 [label="BinOp(*)"]
+	node0 -> node2
+	node3 [label="Number(IntToken(v=5))"]
+	node2 -> node3
+	node4 [label="BinOp(/)"]
+	node2 -> node4
+	node5 [label="Number(IntToken(v=6))"]
+	node4 -> node5
+	node6 [label="Number(IntToken(v=2))"]
+	node4 -> node6
+}
