@@ -44,9 +44,9 @@ def eval_math(tree: BinOp, env: dict[str, IntToken | FloatToken | StringToken | 
                 raise TypeError(f"Invalid operation: {type(left).__name__} + {type(right).__name__}")
         case "*":
             if isinstance(left, StringToken) and isinstance(right, IntToken):
-                return StringToken(left.v * right.v)
+                return StringToken(left.v * int(right.v))
             elif isinstance(left, IntToken) and isinstance(right, StringToken):
-                return StringToken(right.v * left.v)
+                return StringToken(int(right.v) * left.v)
             elif isinstance(left, (IntToken, FloatToken)) and isinstance(right, (IntToken, FloatToken)):
                 if isinstance(left, FloatToken) or isinstance(right, FloatToken):
                     return FloatToken(left.v * right.v)

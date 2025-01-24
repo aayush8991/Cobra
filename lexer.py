@@ -33,7 +33,7 @@ class StringToken(Token):
 class OperatorToken(Token):
     o: str
 
-keywords = {"if", "then", "else"}
+keywords = {"if", "then", "else", "end"}
 
 def lex(s: str) -> Iterator[Token]:
     i = 0
@@ -81,6 +81,10 @@ def lex(s: str) -> Iterator[Token]:
 
         else:
             match t := s[i]:
-                case '+' | '*' | '-' | '/' | '^' | '(' | ')':
+                case '+' | '*' | '-' | '/' | '^' | '(' | ')' | '<' | '>' | '{' | '}':
                     i = i + 1
                     yield OperatorToken(t)
+                case '=':
+                    if i + 1 < len(s) and s[i + 1] == '=':
+                        i = i + 2
+                        yield OperatorToken('==')
