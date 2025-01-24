@@ -22,9 +22,9 @@ class VarRef(AST):
 
 @dataclass
 class If(AST):
-    c: AST
-    t: AST
-    e: AST
+    cond: AST
+    then: AST
+    else_: AST
 
 @dataclass
 class WhileLoop(AST):

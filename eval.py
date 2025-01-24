@@ -74,12 +74,27 @@ def eval_math(tree: BinOp, env: dict[str, IntToken | FloatToken | StringToken | 
                 return IntToken(left.v ** right.v)
             else:
                 raise TypeError(f"Invalid operation: {type(left).__name__} ^ {type(right).__name__}")
+        case ">":
+            if isinstance(left, (IntToken, FloatToken)) and isinstance(right, (IntToken, FloatToken)):
+                return BoolToken(Decimal(left.v) > Decimal(right.v))
+            else:
+                raise TypeError(f"Invalid operation: {type(left).__name__} > {type(right).__name__}")
+        case "<":
+            if isinstance(left, (IntToken, FloatToken)) and isinstance(right, (IntToken, FloatToken)):
+                return BoolToken(Decimal(left.v) < Decimal(right.v))
+            else:
+                raise TypeError(f"Invalid operation: {type(left).__name__} < {type(right).__name__}")
+        case "==":
+            if isinstance(left, (IntToken, FloatToken)) and isinstance(right, (IntToken, FloatToken)):
+                return BoolToken(Decimal(left.v) == Decimal(right.v))
+            else:
+                raise TypeError(f"Invalid operation: {type(left).__name__} == {type(right).__name__}")
 
 def eval_cond(tree: If, env: dict[str, IntToken | FloatToken | StringToken | BoolToken]):
-    condition = e(tree.condition, env)
-    if isinstance(condition, BoolToken) and condition.v:
-        return e(tree.then, env)
-    return e(tree.else_, env)
+    if (e(tree.cond)).v:    # if e(tree.cond) == BoolToken(True):
+        return e(tree.then)
+    else:
+        return e(tree.else_)
 
 def eval_loop(tree: WhileLoop, env: dict[str, IntToken | FloatToken | StringToken | BoolToken]):
     while True:

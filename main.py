@@ -54,10 +54,10 @@ if __name__ == "__main__":
 
     tree = parse(code)
 
-    graph = visualize_ast(tree)
-    graph.render("ast_tree", view=True)
+    # graph = visualize_ast(tree)
+    # graph.render("ast_tree", view=True)
     
     result = e(tree)
-    astpretty.pprint(tree)
+    # astpretty.pprint(tree)
 
     print(f"Result: {result}")
