@@ -43,15 +43,21 @@ def visualize_ast(node, graph=None, parent=None, counter=None):
 
 
 if __name__ == "__main__":
-    expression = '2 + 5 * 6 / 2'
-    tree = parse(expression)
+  
+    file_path = "code.txt"
+    try:
+        with open(file_path, "r") as f:
+            code = f.read()
+    except FileNotFoundError:
+        print(f"Error: File '{file_path}' not found.")
+        exit(1)
 
-    # Visualize and save the AST
+    tree = parse(code)
+
     graph = visualize_ast(tree)
     graph.render("ast_tree", view=True)
     
     result = e(tree)
     astpretty.pprint(tree)
 
-    # Print the result
     print(f"Result: {result}")
