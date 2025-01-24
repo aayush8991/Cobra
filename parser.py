@@ -1,5 +1,5 @@
-from tree import AST, BinOp, Number, If
-from lexer import lex, ParseError, Token, IntToken, FloatToken, StringToken, OperatorToken, KeywordToken
+from tree import AST, BinOp, If
+from lexer import *
 from more_itertools import peekable
 
 def parse(s: str) -> AST:
@@ -98,13 +98,13 @@ def parse(s: str) -> AST:
         match t.peek(None):
             case IntToken(v):
                 next(t)
-                return Number(IntToken(v))
+                return IntToken(v)
             case FloatToken(v):
                 next(t)
-                return Number(FloatToken(v))
+                return FloatToken(v)
             case StringToken(v):
                 next(t)
-                return Number(StringToken(v))
+                return StringToken(v)
             case OperatorToken('('):
                 next(t)
                 expr = parse_sub()  # Parse the expression inside the parentheses

@@ -1,8 +1,9 @@
 import astpretty
 from graphviz import Digraph
 from parser import parse
-from tree import e
-from tree import BinOp, Number, If
+from eval import e
+from tree import BinOp, If
+from lexer import Token
 
 def visualize_ast(node, graph=None, parent=None, counter=None):
     """Recursively add nodes and edges to the Graphviz Digraph."""
@@ -16,8 +17,8 @@ def visualize_ast(node, graph=None, parent=None, counter=None):
     label = ""
     if isinstance(node, BinOp):
         label = f"BinOp({node.op})"
-    elif isinstance(node, Number):
-        label = f"Number({node.v})"
+    elif isinstance(node, Token):
+        label = f"Token({node.v})"
     elif isinstance(node, If):
         label = "If"
     else:
@@ -44,12 +45,13 @@ def visualize_ast(node, graph=None, parent=None, counter=None):
 if __name__ == "__main__":
     expression = '2 + 5 * 6 / 2'
     tree = parse(expression)
+
+    # Visualize and save the AST
+    graph = visualize_ast(tree)
+    graph.render("ast_tree", view=True)
+    
     result = e(tree)
     astpretty.pprint(tree)
 
     # Print the result
     print(f"Result: {result}")
-
-    # Visualize and save the AST
-    graph = visualize_ast(tree)
-    graph.render("ast_tree", view=True)
