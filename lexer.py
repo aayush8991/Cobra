@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from collections.abc import Iterator
+from decimal import Decimal
 
 class ParseError(Exception):
     """Exception raised for errors in the parsing process."""
@@ -14,11 +15,11 @@ class KeywordToken(Token):
     
 @dataclass
 class IntToken(Token):
-    v: int
+    v: Decimal
 
 @dataclass
 class FloatToken(Token):
-    v: float
+    v: Decimal
 
 @dataclass
 class BoolToken(Token):
@@ -64,9 +65,9 @@ def lex(s: str) -> Iterator[Token]:
                 t = t + s[i]
                 i = i + 1
             if '.' in t:
-                yield FloatToken(float(t))
+                yield FloatToken(Decimal(t))
             else:
-                yield IntToken(int(t))
+                yield IntToken(Decimal(t))
 
         elif s[i] == '"':
             i += 1

@@ -1,5 +1,6 @@
 from tree import *
 from lexer import *
+from decimal import Decimal
 
 def e(tree: AST, env: dict[str, IntToken | FloatToken | StringToken | BoolToken] = None):
     """

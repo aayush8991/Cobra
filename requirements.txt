@@ -3,3 +3,4 @@ pytest
 lark-parser
 graphviz
 more-itertools
+decimal

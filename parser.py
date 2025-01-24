@@ -1,6 +1,7 @@
 from tree import AST, BinOp, If
 from lexer import *
 from more_itertools import peekable
+from decimal import Decimal
 
 def parse(s: str) -> AST:
     t = peekable(lex(s))
