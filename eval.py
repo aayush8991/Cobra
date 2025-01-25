@@ -2,23 +2,30 @@ from tree import *
 from lexer import *
 from decimal import Decimal
 
+def lookup(env, v):
+    for u, uv in reversed(env):
+        if u == v:
+            return uv
+    raise ValueError("No value found.")
+
 def e(tree: AST, env: dict[str, IntToken | FloatToken | StringToken | BoolToken] = None):
     """
     Evaluate an AST node in the given environment.
     """
     if env is None:
-        env = {}
+        env = []
 
     match tree:
         case Token():
             return tree
-        case VarAssign(var_name, value):
-            env[var_name] = e(value, env)
-            return env[var_name]
-        case VarRef(var_name):
-            if var_name in env:
-                return env[var_name]
-            raise NameError(f"Variable '{var_name}' is not defined")
+        case Var(v):
+            return lookup(env, v)
+        case Let(variable, value_expr, body_expr):
+            value = e(value_expr, env)
+            env.append((variable, value))
+            result = e(body_expr, env)
+            env.pop()
+            return result   
         case WhileLoop(condition, body):
             return eval_loop(tree, env)
         case BinOp():

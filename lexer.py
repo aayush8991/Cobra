@@ -33,7 +33,11 @@ class StringToken(Token):
 class OperatorToken(Token):
     o: str
 
-keywords = {"if", "then", "else", "end"}
+@dataclass
+class VariableToken(Token):
+    v: str
+
+keywords = {"if", "then", "else", "end", "let", "in", "be"}
 
 def lex(s: str) -> Iterator[Token]:
     i = 0
@@ -54,7 +58,8 @@ def lex(s: str) -> Iterator[Token]:
             if t in keywords:
                 yield KeywordToken(t)
             else:
-                raise ValueError(f"Unexpected keyword: {t}")
+                # raise ValueError(f"Unexpected keyword: {t}")
+                yield VariableToken(t)
 
         elif s[i].isdigit():
             t = s[i]

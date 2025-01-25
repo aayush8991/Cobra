@@ -1,9 +1,9 @@
 import astpretty
 from graphviz import Digraph
-from parser import parse
-from eval import e
-from tree import BinOp, If
-from lexer import Token
+from parser import *
+from eval import *
+from tree import *
+from lexer import *
 
 def visualize_ast(node, graph=None, parent=None, counter=None):
     """Recursively add nodes and edges to the Graphviz Digraph."""

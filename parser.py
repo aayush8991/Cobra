@@ -1,4 +1,4 @@
-from tree import AST, BinOp, If
+from tree import *
 from lexer import *
 from more_itertools import peekable
 from decimal import Decimal
@@ -17,6 +17,20 @@ def parse(s: str) -> AST:
         expr = parse_if()
         expect(OperatorToken('}'))
         return expr
+
+    def parse_let():
+        match t.peek(None):
+            case KeywordToken("let"):
+                next(t)
+                vt = next(t)
+                expect(KeywordToken("be"))
+                e = parse_let()
+                expect(KeywordToken("in"))
+                f = parse_let()
+                expect(KeywordToken("end"))
+                return Let(vt.v, e, f)
+            case _:
+                return parse_if()
 
     def parse_if():
         match t.peek(None):
@@ -108,17 +122,20 @@ def parse(s: str) -> AST:
                 return StringToken(v)
             case OperatorToken('('):
                 next(t)
-                expr = parse_sub()  # Parse the expression inside the parentheses
+                expr = parse_let()  # Parse the expression inside the parentheses
                 match t.peek(None):
                     case OperatorToken(')'):
                         next(t)
                         return expr
                     case _:
                         raise ValueError("Missing closing parenthesis")
+            case VariableToken(v):
+                next(t)
+                return Var(v) 
             case _:
                 raise ValueError("Unexpected token in expression")
 
-    result = parse_if()
+    result = parse_let()
     if result is None:
         raise ValueError("Invalid syntax")
     return result

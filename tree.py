@@ -12,13 +12,14 @@ class BinOp(AST):
     _fields = ('op', 'left', 'right')
 
 @dataclass
-class VarAssign(AST):
-    var_name: str
-    value: AST
+class Let(AST):
+    v: str
+    e: AST
+    f: AST
 
 @dataclass
-class VarRef(AST):
-    var_name: str
+class Var(AST):
+    v: str
 
 @dataclass
 class If(AST):
