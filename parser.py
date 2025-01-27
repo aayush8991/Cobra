@@ -60,6 +60,10 @@ def parse(s: str) -> AST:
             next(t)
             r = parse_sub()
             return BinOp('==', l, r)
+        elif t.peek(None) == OperatorToken('!='):
+            next(t)
+            r = parse_sub()
+            return BinOp('!=', l, r)
         else:
             return l
 
