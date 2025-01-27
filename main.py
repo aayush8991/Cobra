@@ -21,6 +21,12 @@ def visualize_ast(node, graph=None, parent=None, counter=None):
         label = f"Token({node.v})"
     elif isinstance(node, If):
         label = "If"
+    elif isinstance(node, Let):
+        label = f"Var({node.v})"
+    elif isinstance(node, WhileLoop):
+        label = "WhileLoop"
+    elif isinstance(node, Var):
+        label = f"Var({node.v})"
     else:
         label = "Unknown"
 
@@ -35,9 +41,16 @@ def visualize_ast(node, graph=None, parent=None, counter=None):
         visualize_ast(node.left, graph, node_id, counter)
         visualize_ast(node.right, graph, node_id, counter)
     elif isinstance(node, If):
-        visualize_ast(node.c, graph, node_id, counter)
-        visualize_ast(node.t, graph, node_id, counter)
+        visualize_ast(node.cond, graph, node_id, counter)
+        visualize_ast(node.then, graph, node_id, counter)
+        visualize_ast(node.else_, graph, node_id, counter)
+    elif isinstance(node, Let):
         visualize_ast(node.e, graph, node_id, counter)
+        visualize_ast(node.f, graph, node_id, counter)
+    elif isinstance(node, WhileLoop):
+        visualize_ast(node.condition, graph, node_id, counter)
+        for stmt in node.body:
+            visualize_ast(stmt, graph, node_id, counter)
 
     return graph
 
@@ -54,10 +67,10 @@ if __name__ == "__main__":
 
     tree = parse(code)
 
-    # graph = visualize_ast(tree)
-    # graph.render("ast_tree", view=True)
+    graph = visualize_ast(tree)
+    graph.render("ast_tree", view=True)
     
     result = e(tree)
-    # astpretty.pprint(tree)
+    astpretty.pprint(tree)
 
     print(f"Result: {result}")

@@ -2,42 +2,44 @@ from tree import *
 from lexer import *
 from decimal import Decimal
 
-def lookup(env, v):
+env = []
+
+def lookup(v):
+    """
+    Lookup a variable in the global environment.
+    """
     for u, uv in reversed(env):
         if u == v:
             return uv
     raise ValueError("No value found.")
 
-def e(tree: AST, env: dict[str, IntToken | FloatToken | StringToken | BoolToken] = None):
+def e(tree: AST):
     """
-    Evaluate an AST node in the given environment.
+    Evaluate an AST node using the global environment.
     """
-    if env is None:
-        env = []
-
     match tree:
         case Token():
             return tree
         case Var(v):
-            return lookup(env, v)
+            return lookup(v)
         case Let(variable, value_expr, body_expr):
-            value = e(value_expr, env)
+            value = e(value_expr)
             env.append((variable, value))
-            result = e(body_expr, env)
+            result = e(body_expr)
             env.pop()
             return result   
         case WhileLoop(condition, body):
-            return eval_loop(tree, env)
+            return eval_loop(tree)
         case BinOp():
-            return eval_math(tree, env)
+            return eval_math(tree)
         case If():
-            return eval_cond(tree, env)
+            return eval_cond(tree)
         case _:
             raise ValueError("Unknown AST node")
 
-def eval_math(tree: BinOp, env: dict[str, IntToken | FloatToken | StringToken | BoolToken]):
-    left = e(tree.left, env)
-    right = e(tree.right, env)
+def eval_math(tree: BinOp):
+    left = e(tree.left)
+    right = e(tree.right)
 
     match tree.op:
         case "+":
@@ -97,16 +99,16 @@ def eval_math(tree: BinOp, env: dict[str, IntToken | FloatToken | StringToken | 
             else:
                 raise TypeError(f"Invalid operation: {type(left).__name__} == {type(right).__name__}")
 
-def eval_cond(tree: If, env: dict[str, IntToken | FloatToken | StringToken | BoolToken]):
-    if (e(tree.cond)).v:    # if e(tree.cond) == BoolToken(True):
+def eval_cond(tree: If):
+    if e(tree.cond).v:
         return e(tree.then)
     else:
         return e(tree.else_)
 
-def eval_loop(tree: WhileLoop, env: dict[str, IntToken | FloatToken | StringToken | BoolToken]):
+def eval_loop(tree: WhileLoop):
     while True:
-        condition = e(tree.condition, env)
+        condition = e(tree.condition)
         if not (isinstance(condition, BoolToken) and condition.v):
             break
         for stmt in tree.body:
-            e(stmt, env)
+            e(stmt)
