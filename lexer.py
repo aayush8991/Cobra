@@ -37,7 +37,7 @@ class OperatorToken(Token):
 class VariableToken(Token):
     v: str
 
-keywords = {"if", "then", "else", "end", "let", "in", "be"}
+keywords = ["if", "then", "else", "end", "let", "in", "be"]
 
 def lex(s: str) -> Iterator[Token]:
     i = 0
@@ -57,9 +57,20 @@ def lex(s: str) -> Iterator[Token]:
                 i = i + 1
             if t in keywords:
                 yield KeywordToken(t)
+                # if t == "let":
+                #     while i < len(s) and s[i].isspace():
+                #         i += 1
+                #     # If the next sequence is a valid variable name, yield it
+                #     if i < len(s) and s[i].isalpha():
+                #         var = s[i]
+                #         i += 1
+                #         while i < len(s) and s[i].isalpha():
+                #             var += s[i]
+                #             i += 1
+                #         yield VariableToken(var)
             else:
-                # raise ValueError(f"Unexpected keyword: {t}")
                 yield VariableToken(t)
+                # raise ValueError(f"Unexpected keyword: {t}")
 
         elif s[i].isdigit():
             t = s[i]
