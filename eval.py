@@ -22,13 +22,24 @@ def e(tree: AST):
             return tree
         case Var(v):
             return lookup(v)
+        case Fun(f, a, b, c):
+            env.append((f, (a, b)))
+            x = e(c)
+            env.pop()
+            return x
+        case Call(f, x):
+            a, b = lookup(f)
+            env.append((a, e(x)))
+            y = e(b)
+            env.pop()
+            return y
         case Let(variable, value_expr, body_expr):
             value = e(value_expr)
             env.append((variable, value))
             result = e(body_expr)
             env.pop()
             return result   
-        case While(condition, body):
+        case While():
             return eval_loop(tree)
         case BinOp():
             return eval_math(tree)

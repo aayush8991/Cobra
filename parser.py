@@ -30,6 +30,22 @@ def parse(s: str) -> AST:
                 expect(KeywordToken("end"))
                 return Let(vt.v, e, f)
             case _:
+                return parse_fun()
+            
+    def parse_fun():
+        match t.peek(None):
+            case KeywordToken("fun"):
+                next(t)
+                n = next(t)
+                expect(OperatorToken('('))
+                a = next(t)
+                expect(OperatorToken(')'))
+                expect(KeywordToken("is"))
+                b = parse_braced_expr()
+                expect(KeywordToken("end"))
+                c = Call(n.v, a)
+                return Fun(n.v, a.v, b, c)
+            case _:
                 return parse_if()
 
     def parse_if():

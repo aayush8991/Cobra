@@ -21,6 +21,7 @@ class Let(AST):
 @dataclass
 class Var(AST):
     v: str
+    i: int = None
 
 @dataclass
 class If(AST):
@@ -34,3 +35,17 @@ class While(AST):
     condition: AST
     body: AST
     _fields = ('condition', 'body')
+
+@dataclass
+class Fun(AST):
+    n: str
+    a: str
+    b: AST
+    e: AST
+    _fields = ('n', 'a', 'b', 'e')
+
+@dataclass
+class Call(AST):
+    n: str
+    a: AST
+    _fields = ('n', 'a')
