@@ -16,6 +16,7 @@ class Let(AST):
     v: str
     e: AST
     f: AST
+    _fields = ('v', 'e', 'f')
 
 @dataclass
 class Var(AST):
@@ -26,8 +27,10 @@ class If(AST):
     cond: AST
     then: AST
     else_: AST
+    _fields = ('cond', 'then', 'else_')
 
 @dataclass
 class WhileLoop(AST):
     condition: AST
     body: list[AST]
+    _fields = ('condition', 'body')
