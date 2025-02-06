@@ -22,13 +22,24 @@ def e(tree: AST):
             return tree
         case Var(v):
             return lookup(v)
+        case Fun(f, a, b, c):
+            env.append((f, (a, b)))
+            x = e(c)
+            env.pop()
+            return x
+        case Call(f, x):
+            a, b = lookup(f)
+            env.append((a, e(x)))
+            y = e(b)
+            env.pop()
+            return y
         case Let(variable, value_expr, body_expr):
             value = e(value_expr)
             env.append((variable, value))
             result = e(body_expr)
             env.pop()
             return result   
-        case WhileLoop(condition, body):
+        case While():
             return eval_loop(tree)
         case BinOp():
             return eval_math(tree)
@@ -110,10 +121,9 @@ def eval_cond(tree: If):
     else:
         return e(tree.else_)
 
-def eval_loop(tree: WhileLoop):
+def eval_loop(tree: While):
     while True:
         condition = e(tree.condition)
         if not (isinstance(condition, BoolToken) and condition.v):
             break
-        for stmt in tree.body:
-            e(stmt)
+        e(tree.body)

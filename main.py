@@ -19,12 +19,16 @@ def visualize_ast(node, graph=None, parent=None, counter=None):
         label = f"BinOp({node.op})"
     elif isinstance(node, Token):
         label = f"Token({node.v})"
+    elif isinstance(node, Fun):
+        label = f"Fun({node.n})"
+    elif isinstance(node, Call):
+        label = f"Call({node.n})"
     elif isinstance(node, If):
         label = "If"
     elif isinstance(node, Let):
         label = f"Var({node.v})"
-    elif isinstance(node, WhileLoop):
-        label = "WhileLoop"
+    elif isinstance(node, While):
+        label = "While"
     elif isinstance(node, Var):
         label = f"Var({node.v})"
     else:
@@ -40,6 +44,11 @@ def visualize_ast(node, graph=None, parent=None, counter=None):
     if isinstance(node, BinOp):
         visualize_ast(node.left, graph, node_id, counter)
         visualize_ast(node.right, graph, node_id, counter)
+    elif isinstance(node, Fun):
+        visualize_ast(node.b, graph, node_id, counter)
+        visualize_ast(node.e, graph, node_id, counter)
+    elif isinstance(node, Call):
+        visualize_ast(node.a, graph, node_id, counter)
     elif isinstance(node, If):
         visualize_ast(node.cond, graph, node_id, counter)
         visualize_ast(node.then, graph, node_id, counter)
@@ -47,10 +56,9 @@ def visualize_ast(node, graph=None, parent=None, counter=None):
     elif isinstance(node, Let):
         visualize_ast(node.e, graph, node_id, counter)
         visualize_ast(node.f, graph, node_id, counter)
-    elif isinstance(node, WhileLoop):
+    elif isinstance(node, While):
         visualize_ast(node.condition, graph, node_id, counter)
-        for stmt in node.body:
-            visualize_ast(stmt, graph, node_id, counter)
+        visualize_ast(node.body, graph, node_id, counter)
 
     return graph
 

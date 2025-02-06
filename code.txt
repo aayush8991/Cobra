@@ -1,1 +1,4 @@
-let a be 3 in let a be a + 3 in (if {a == 6} then {1 + 1} else {2 + 2} end) end end
+fun dbl(a) is {3 + 3} end
+in
+  dbl(2) + dbl(3)
+end
