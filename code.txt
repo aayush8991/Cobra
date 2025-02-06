@@ -1,1 +1,5 @@
-let a be 3 in let a be a + 3 in (if {a == 6} then {1 + 1} else {2 + 2} end) end end
+let a be 5 in
+    while {a < 6} do
+        { let a be a + 1 in 0 end }
+    end
+end

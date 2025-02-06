@@ -30,7 +30,7 @@ class If(AST):
     _fields = ('cond', 'then', 'else_')
 
 @dataclass
-class WhileLoop(AST):
+class While(AST):
     condition: AST
-    body: list[AST]
+    body: AST
     _fields = ('condition', 'body')

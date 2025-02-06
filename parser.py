@@ -14,7 +14,7 @@ def parse(s: str) -> AST:
     
     def parse_braced_expr():
         expect(OperatorToken('{'))
-        expr = parse_if()
+        expr = parse_let()
         expect(OperatorToken('}'))
         return expr
 
@@ -43,6 +43,18 @@ def parse(s: str) -> AST:
                 else_ = parse_braced_expr()
                 expect(KeywordToken("end"))
                 return If(cond, then, else_)
+            case _:
+                return parse_while()
+            
+    def parse_while():
+        match t.peek(None):
+            case KeywordToken("while"):
+                next(t)
+                cond = parse_braced_expr()
+                expect(KeywordToken("do"))
+                body = parse_braced_expr()
+                expect(KeywordToken("end"))
+                return While(cond, body)
             case _:
                 return parse_cmp()
 

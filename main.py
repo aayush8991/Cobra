@@ -23,8 +23,8 @@ def visualize_ast(node, graph=None, parent=None, counter=None):
         label = "If"
     elif isinstance(node, Let):
         label = f"Var({node.v})"
-    elif isinstance(node, WhileLoop):
-        label = "WhileLoop"
+    elif isinstance(node, While):
+        label = "While"
     elif isinstance(node, Var):
         label = f"Var({node.v})"
     else:
@@ -47,10 +47,9 @@ def visualize_ast(node, graph=None, parent=None, counter=None):
     elif isinstance(node, Let):
         visualize_ast(node.e, graph, node_id, counter)
         visualize_ast(node.f, graph, node_id, counter)
-    elif isinstance(node, WhileLoop):
+    elif isinstance(node, While):
         visualize_ast(node.condition, graph, node_id, counter)
-        for stmt in node.body:
-            visualize_ast(stmt, graph, node_id, counter)
+        visualize_ast(node.body, graph, node_id, counter)
 
     return graph
 

@@ -28,7 +28,7 @@ def e(tree: AST):
             result = e(body_expr)
             env.pop()
             return result   
-        case WhileLoop(condition, body):
+        case While(condition, body):
             return eval_loop(tree)
         case BinOp():
             return eval_math(tree)
@@ -110,10 +110,9 @@ def eval_cond(tree: If):
     else:
         return e(tree.else_)
 
-def eval_loop(tree: WhileLoop):
+def eval_loop(tree: While):
     while True:
         condition = e(tree.condition)
         if not (isinstance(condition, BoolToken) and condition.v):
             break
-        for stmt in tree.body:
-            e(stmt)
+        e(tree.body)
