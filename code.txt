@@ -1,5 +1,9 @@
-let a be 5 in
-    while {a < 6} do
-        { let a be a + 1 in 0 end }
-    end
-end
+let a be 0 in  
+    let sum be 0 in  
+        while {a < 10} do  
+            { let sum be sum + a in  
+                  let a be a + 1 in 0 end  
+            end }  
+        end  
+    end  
+end  
