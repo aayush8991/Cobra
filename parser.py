@@ -28,7 +28,7 @@ def parse(s: str) -> AST:
                 expect(KeywordToken("in"))
                 f = parse_let()
                 expect(KeywordToken("end"))
-                return Let(vt.v, e, f)
+                return Let(Var(vt.v), e, f)
             case _:
                 return parse_fun()
             

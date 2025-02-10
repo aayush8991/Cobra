@@ -11,7 +11,7 @@ def lookup(env, v):
 def resolve(t: AST, env=None) -> AST:
     if env is None:
         env = []
-
+        
     match t:
         case IntToken(n):
             return IntToken(n)
@@ -34,7 +34,7 @@ def resolve(t: AST, env=None) -> AST:
             return Fun(f, Var(x, 0), br, yr)
 
         case Call(f, x):
-            return Call(f, resolve(x, env))
+            return Call(resolve(f, env), resolve(x, env))
 
         case BinOp(op, left, right):
             return BinOp(op, resolve(left, env), resolve(right, env))
