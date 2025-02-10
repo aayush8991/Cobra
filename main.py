@@ -4,6 +4,7 @@ from parser import *
 from eval import *
 from tree import *
 from lexer import *
+from resolver import *
 
 def visualize_ast(node, graph=None, parent=None, counter=None):
     """Recursively add nodes and edges to the Graphviz Digraph."""
@@ -73,12 +74,16 @@ if __name__ == "__main__":
         print(f"Error: File '{file_path}' not found.")
         exit(1)
 
-    tree = parse(code)
+    ast = parse(code)
 
-    graph = visualize_ast(tree)
+    graph = visualize_ast(ast)
     graph.render("ast_tree", view=True)
     
-    result = e(tree)
-    astpretty.pprint(tree)
+    abt = resolve(ast)
+    graph = visualize_ast(abt)
+    graph.render("abt_tree", view=True)
+
+    result = e(abt)
+    astpretty.pprint(abt)
 
     print(f"Result: {result}")
