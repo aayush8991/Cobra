@@ -1,4 +1,5 @@
-fun dbl(a) is {3 + 3} end
-in
-  dbl(2) + dbl(3)
+let a be 5 in
+    while {a < 6} do
+        { let a be a + 1 in 0 end }
+    end
 end

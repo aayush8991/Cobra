@@ -27,11 +27,11 @@ def visualize_ast(node, graph=None, parent=None, counter=None):
     elif isinstance(node, If):
         label = "If"
     elif isinstance(node, Let):
-        label = f"Var({node.v})"
+        label = f"{node.v}"
     elif isinstance(node, While):
         label = "While"
     elif isinstance(node, Var):
-        label = f"Var({node.v})"
+        label = f"{node}"
     else:
         label = "Unknown"
 
@@ -78,8 +78,10 @@ if __name__ == "__main__":
 
     graph = visualize_ast(ast)
     graph.render("ast_tree", view=True)
-    
+
+    print("-------------------------------------")
     abt = resolve(ast)
+
     graph = visualize_ast(abt)
     graph.render("abt_tree", view=True)
 
