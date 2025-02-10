@@ -1,45 +1,49 @@
 from tree import *
-from lexer import Token
-def make_fresh():
-    i = 0
-    def fresh():
-        nonlocal i
-        i = i + 1
-        return i
-    return fresh
+from lexer import IntToken
 
-env = []
-
-def lookup(v):
-    """
-    Lookup a variable in the global environment.
-    """
-    for u, uv in reversed(env):
+def lookup(env, v):
+    """Lookup the de Bruijn index of a variable."""
+    for i, (u, _) in enumerate(reversed(env)):
         if u == v:
-            return uv
-    raise ValueError("No value found.")
+            return i  # Distance from binding
+    raise ValueError(f"Unbound variable: {v}")
 
-def resolve(t: AST, env = None, fresh = None) -> AST:
-    if env is None: env = []
-    if fresh is None: fresh = make_fresh()
+def resolve(t: AST, env=None) -> AST:
+    if env is None:
+        env = []
 
     match t:
-        case Token(n):
-            return Token(n)
-        case Let(Var(x, _), e, f):
-            er = resolve(e, env, fresh)
-            env.append((x, i := fresh()))
-            fr = resolve(f, env, fresh)
-            env.pop()
-            return Let(Var(x, i), er, fr)
+        case IntToken(n):
+            return IntToken(n)
+
         case Var(x, _):
             return Var(x, lookup(env, x))
-        case Call(f, x):
-            xr = resolve(x, env, fresh)
-            return Call(f, xr)
-        case Fun(f, Var(x, _), b, y):
-            env.append((x, i := fresh()))
-            br = resolve(b, env, fresh)
+
+        case Let(Var(x, _), e, f):
+            er = resolve(e, env)
+            env.append((x, None))
+            fr = resolve(f, env)
             env.pop()
-            yr = resolve(y, env, fresh)
-            return Fun(f, Var(x, i), br, yr)
+            return Let(Var(x, 0), er, fr)
+
+        case Fun(f, Var(x, _), b, y):
+            env.append((x, None))
+            br = resolve(b, env)
+            yr = resolve(y, env)
+            env.pop()
+            return Fun(f, Var(x, 0), br, yr)
+
+        case Call(f, x):
+            return Call(f, resolve(x, env))
+
+        case BinOp(op, left, right):
+            return BinOp(op, resolve(left, env), resolve(right, env))
+
+        case If(cond, then, else_):
+            return If(resolve(cond, env), resolve(then, env), resolve(else_, env))
+
+        case While(condition, body):
+            return While(resolve(condition, env), resolve(body, env))
+
+        case _:
+            return t
