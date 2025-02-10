@@ -1,3 +1,7 @@
+"""
+Contains the classes that represent the AST of the language.
+"""
+
 from dataclasses import dataclass
 
 # Abstract Syntax Tree classes
