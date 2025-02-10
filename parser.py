@@ -1,7 +1,3 @@
-"""
-Parses tokens retruned by the lexer into an AST.
-"""
-
 from tree import *
 from lexer import *
 from more_itertools import peekable

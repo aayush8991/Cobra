@@ -1,8 +1,3 @@
-"""
-Converts the AST into an ABT
-Uses de Bruijn indices to resolve variable bindings
-"""
-
 from tree import *
 from lexer import IntToken
 

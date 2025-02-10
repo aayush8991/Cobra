@@ -1,9 +1,3 @@
-"""
-Tests code.txt and generates AST and ABT trees.
-It uses all parser, lexer, resolver and eval modules.
-Tests if all work properly together
-"""
-
 import astpretty
 from graphviz import Digraph
 from parser import *

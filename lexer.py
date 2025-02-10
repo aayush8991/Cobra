@@ -1,7 +1,3 @@
-"""
-Makes tokens from the given input
-"""
-
 from dataclasses import dataclass
 from collections.abc import Iterator
 from decimal import Decimal

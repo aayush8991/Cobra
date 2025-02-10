@@ -1,7 +1,3 @@
-"""
-Evaluates the ABT (Abstract Binding Tree)
-"""
-
 from tree import *
 from lexer import *
 from decimal import Decimal
