@@ -1,0 +1,7 @@
+let a be 1 in  
+    if {a == 0} then
+        {let a be a + 1 in _ end}
+    else 
+        {let a be a + 3 in _ end}
+    end
+end  

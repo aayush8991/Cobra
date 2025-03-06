@@ -125,4 +125,4 @@ def eval_loop(tree: While, stack):
         condition = e(tree.condition, stack).v
         if not (isinstance(condition, BoolToken) and condition.v):
             break
-        e(tree.body, stack)
+        return e(tree.body, stack)

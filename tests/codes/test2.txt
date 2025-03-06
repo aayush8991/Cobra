@@ -1,0 +1,4 @@
+fun dbl(a) 
+    is {3 + 3} end 
+    in dbl(2) + dbl(3)
+end
