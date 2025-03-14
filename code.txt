@@ -1,9 +1,7 @@
-let a be 0 in  
-    let sum be 0 in  
-        while {a < 10} do  
-            { let sum be sum + a in  
-                  let a be a + 1 in 0 end  
-            end }  
-        end  
-    end  
-end  
+let x be 5 in
+    fun f(y) is {x} in
+        fun g(z) is {let x be 6 in f(z) end} in
+            g(0)
+        end
+    end
+end

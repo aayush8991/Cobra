@@ -8,40 +8,36 @@ def e(tree: AST, stack=None):
     """
     if stack is None:
         stack = []
-
     match tree:
         case Token():
             return tree
-        case Var(_,i):
+        case Var(v, i):
             return stack[-(i + 1)]
-        case Let(_, value_expr, body_expr):
+        case Fun(name, parameters, func_exp, func_call):
+            return (name, func_exp, stack.copy())
+        case Call(name, value):
+            fun_name, fun_body, fun_stack = e(name, stack)
+            arg_value = e(value, stack)
+            fun_stack.append(arg_value)
+            result = e(fun_body, fun_stack)
+            fun_stack.pop()
+            return result
+        case Let(variable, value_expr, body_expr):
             value = e(value_expr, stack)
             stack.append(value)
             result = e(body_expr, stack)
             stack.pop()
             return result
-        case Fun(f, _, b, _):
-            return (f, b, stack.copy())
-        case Call(f, arg):
-            fun_name, fun_body, fun_stack = e(f, stack)
-            arg_value = e(arg, stack)
-            fun_stack.append(arg_value)
-            result = e(fun_body, fun_stack)
-            fun_stack.pop()
-            return result
+        case While():
+            return eval_loop(tree, stack)
         case BinOp():
             return eval_math(tree, stack)
         case If():
             return eval_cond(tree, stack)
-        case While():
-            return eval_loop(tree, stack)
         case _:
-            raise ValueError(f"Unknown ABT node: {tree}")
+            raise ValueError(f"Unknown AST node := {tree}")
 
 def eval_math(tree: BinOp, stack):
-    """
-    Evaluate a binary operation.
-    """
     left = e(tree.left, stack)
     right = e(tree.right, stack)
 
@@ -118,9 +114,6 @@ def eval_cond(tree: If, stack):
         return e(tree.else_, stack)
 
 def eval_loop(tree: While, stack):
-    """
-    Evaluate a while loop.
-    """
     while True:
         condition = e(tree.condition, stack).v
         if not (isinstance(condition, BoolToken) and condition.v):

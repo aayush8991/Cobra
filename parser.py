@@ -5,7 +5,6 @@ from decimal import Decimal
 
 def parse(s: str) -> AST:
     t = peekable(lex(s))
-    
     def expect(what: Token):
         if t.peek(None) == what:
             next(t)
@@ -31,22 +30,23 @@ def parse(s: str) -> AST:
                 return Let(Var(vt.v), e, f)
             case _:
                 return parse_fun()
-            
+
     def parse_fun():
         match t.peek(None):
             case KeywordToken("fun"):
                 next(t)
-                n = next(t)
+                name = next(t)
                 expect(OperatorToken('('))
-                a = next(t)
+                parameters = next(t)
                 expect(OperatorToken(')'))
                 expect(KeywordToken("is"))
-                b = parse_braced_expr()
+                body = parse_braced_expr()
+                expect(KeywordToken("in"))
+                expr = parse_let()
                 expect(KeywordToken("end"))
-                c = Call(n.v, a)
-                return Fun(n.v, a.v, b, c)
+                return Fun(name.v, parameters.v, body, expr)
             case _:
-                return parse_if()
+                return parse_if()   
 
     def parse_if():
         match t.peek(None):
@@ -162,8 +162,13 @@ def parse(s: str) -> AST:
                     case _:
                         raise ValueError("Missing closing parenthesis")
             case VariableToken(v):
-                next(t)
-                return Var(v) 
+                var_name = next(t).v
+                if t.peek(None) == OperatorToken('('):
+                    expect(OperatorToken('('))
+                    arg = parse_let()
+                    expect(OperatorToken(')'))
+                    return Call(var_name, arg)
+                return Var(var_name)
             case _:
                 raise ValueError("Unexpected token in expression")
 

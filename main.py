@@ -76,16 +76,15 @@ if __name__ == "__main__":
 
     ast = parse(code)
 
-    graph = visualize_ast(ast)
-    graph.render("ast_tree", view=True)
+    # graph = visualize_ast(ast)
+    # graph.render("ast_tree", view=True)
 
     print("-------------------------------------")
     abt = resolve(ast)
 
-    graph = visualize_ast(abt)
-    graph.render("abt_tree", view=True)
+    # graph = visualize_ast(abt)
+    # graph.render("abt_tree", view=True)
 
     result = e(abt)
-    astpretty.pprint(abt)
-
+    # astpretty.pprint(abt)
     print(f"Result: {result}")
