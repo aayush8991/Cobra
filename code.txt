@@ -1,7 +1,7 @@
 let x be 5 in
-    fun f(y) is {x} in
-        fun g(z) is {let x be 6 in f(z) end} in
-            g(0)
-        end
+  fun f(y) is {x} in
+    fun g(z) is {let x be 6 in f(z) end} in
+      g(0)
     end
+  end
 end

@@ -13,7 +13,7 @@ class BinOp(AST):
 
 @dataclass
 class Let(AST):
-    v: str
+    v: AST
     e: AST
     f: AST
     _fields = ('v', 'e', 'f')
@@ -38,14 +38,14 @@ class While(AST):
 
 @dataclass
 class Fun(AST):
-    n: str
-    a: str
-    b: AST
-    e: AST
+    name: str
+    func_para: AST
+    func_exp: AST
+    func_body: AST
     _fields = ('n', 'a', 'b', 'e')
 
 @dataclass
 class Call(AST):
-    n: str
-    a: AST
+    name: str
+    value: AST
     _fields = ('n', 'a')

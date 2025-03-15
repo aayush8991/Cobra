@@ -44,7 +44,7 @@ def parse(s: str) -> AST:
                 expect(KeywordToken("in"))
                 expr = parse_let()
                 expect(KeywordToken("end"))
-                return Fun(name.v, parameters.v, body, expr)
+                return Fun(name.v, Var(parameters.v), body, expr)
             case _:
                 return parse_if()   
 

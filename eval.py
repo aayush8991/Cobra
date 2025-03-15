@@ -2,29 +2,40 @@ from tree import *
 from lexer import *
 from decimal import Decimal
 
+def lookup(env, v, i = None):
+    for u, uv in reversed(env):
+        if isinstance(u, Var):
+            if u.v == v and u.i == i:
+                return uv
+        else:
+            if u == v:
+                return uv
+    raise ValueError("No value found.")
+
 def e(tree: AST, stack=None):
-    """
-    Evaluate an ABT (Abstract Binding Tree) using a stack for variable bindings.
-    """
+
     if stack is None:
         stack = []
+
     match tree:
         case Token():
             return tree
         case Var(v, i):
-            return stack[-(i + 1)]
-        case Fun(name, parameters, func_exp, func_call):
-            return (name, func_exp, stack.copy())
+            return lookup(stack, v, i)
+        case Fun(name, func_para, func_exp, func_body):
+            stack.append((name, (func_para, func_exp)))
+            x = e(func_body, stack)
+            stack.pop()
+            return x
         case Call(name, value):
-            fun_name, fun_body, fun_stack = e(name, stack)
-            arg_value = e(value, stack)
-            fun_stack.append(arg_value)
-            result = e(fun_body, fun_stack)
-            fun_stack.pop()
-            return result
+            a, b = lookup(stack, name)
+            stack.append((a, e(value, stack)))
+            y = e(b, stack)
+            stack.pop()
+            return y
         case Let(variable, value_expr, body_expr):
             value = e(value_expr, stack)
-            stack.append(value)
+            stack.append((variable, value))
             result = e(body_expr, stack)
             stack.pop()
             return result

@@ -1,49 +1,51 @@
 from tree import *
-from lexer import IntToken
+from lexer import *
 
 def lookup(env, v):
-    """Lookup the de Bruijn index of a variable."""
-    for i, (u, _) in enumerate(reversed(env)):
+    for u, uv in reversed(env):
         if u == v:
-            return i  # Distance from binding
-    raise ValueError(f"Unbound variable: {v}")
+            return uv
+    raise ValueError("No value found.")
 
-def resolve(t: AST, env=None) -> AST:
+def make_fresh():
+    i = 0
+    def fresh():
+        nonlocal i
+        i = i + 1
+        return i
+    return fresh
+
+def resolve(t: AST, env = None, fresh = None) -> AST:
     if env is None:
         env = []
+    if fresh is None: 
+        fresh = make_fresh()
         
     match t:
         case IntToken(n):
             return IntToken(n)
-
         case Var(x, _):
             return Var(x, lookup(env, x))
-
         case Let(Var(x, _), e, f):
-            er = resolve(e, env)
-            env.append((x, None))
-            fr = resolve(f, env)
+            er = resolve(e, env, fresh)
+            env.append((x, i := fresh()))
+            fr = resolve(f, env, fresh)
             env.pop()
-            return Let(Var(x, 0), er, fr)
-
+            return Let(Var(x, i), er, fr)
         case Fun(f, Var(x, _), b, y):
-            env.append((x, None))
-            br = resolve(b, env)
-            yr = resolve(y, env)
+            env.append((x, i := fresh()))
+            br = resolve(b, env, fresh)
             env.pop()
-            return Fun(f, Var(x, 0), br, yr)
-
+            yr = resolve(y, env, fresh)
+            return Fun(f, Var(x, i), br, yr)
         case Call(f, x):
-            return Call(resolve(f, env), resolve(x, env))
-
+            xr = resolve(x, env, fresh)
+            return Call(f, xr)
         case BinOp(op, left, right):
-            return BinOp(op, resolve(left, env), resolve(right, env))
-
+            return BinOp(op, resolve(left, env, fresh), resolve(right, env, fresh))
         case If(cond, then, else_):
-            return If(resolve(cond, env), resolve(then, env), resolve(else_, env))
-
+            return If(resolve(cond, env, fresh), resolve(then, env, fresh), resolve(else_, env, fresh))
         case While(condition, body):
-            return While(resolve(condition, env), resolve(body, env))
-
+            return While(resolve(condition, env, fresh), resolve(body, env, fresh))
         case _:
             return t
