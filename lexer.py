@@ -96,3 +96,7 @@ def lex(s: str) -> Iterator[Token]:
                     if i + 1 < len(s) and s[i + 1] == '=':
                         i = i + 2
                         yield OperatorToken('!=')
+                case ':':
+                    if i + 1 < len(s) and s[i + 1] == '=':
+                        i = i + 2
+                        yield OperatorToken(':=')  

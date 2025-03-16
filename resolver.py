@@ -32,6 +32,15 @@ def resolve(t: AST, env = None, fresh = None) -> AST:
             fr = resolve(f, env, fresh)
             env.pop()
             return Let(Var(x, i), er, fr)
+        case Assign(var, expr):
+            expr_resolved = resolve(expr, env, fresh)
+            try:
+                var_id = lookup(env, var)
+                return Assign(Var(var, var_id), expr_resolved)
+            except ValueError:
+                env.append((var, i := fresh()))
+                result = Assign(Var(var, i), expr_resolved)
+                return result
         case Fun(f, Var(x, _), b, y):
             env.append((x, i := fresh()))
             br = resolve(b, env, fresh)
@@ -46,6 +55,10 @@ def resolve(t: AST, env = None, fresh = None) -> AST:
         case If(cond, then, else_):
             return If(resolve(cond, env, fresh), resolve(then, env, fresh), resolve(else_, env, fresh))
         case While(condition, body):
-            return While(resolve(condition, env, fresh), resolve(body, env, fresh))
+            condition_resolved = resolve(condition, env, fresh)            
+            body_resolved = []
+            for expr in body:
+                body_resolved.append(resolve(expr, env, fresh))
+            return While(condition_resolved, body_resolved)
         case _:
             return t

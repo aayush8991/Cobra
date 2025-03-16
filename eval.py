@@ -33,6 +33,15 @@ def e(tree: AST, stack=None):
             y = e(b, stack)
             stack.pop()
             return y
+        case Assign(var, expr):
+            value = e(expr, stack)
+            for i in range(len(stack)-1, -1, -1):
+                if stack[i][0] == var:
+                    stack[i] = (var, value)
+                    return value
+
+            stack.append((var, value))
+            return value
         case Let(variable, value_expr, body_expr):
             value = e(value_expr, stack)
             stack.append((variable, value))
@@ -125,8 +134,11 @@ def eval_cond(tree: If, stack):
         return e(tree.else_, stack)
 
 def eval_loop(tree: While, stack):
+    result = None
     while True:
-        condition = e(tree.condition, stack).v
+        condition = e(tree.condition, stack)
         if not (isinstance(condition, BoolToken) and condition.v):
             break
-        return e(tree.body, stack)
+        for expr in tree.body:
+            result = e(expr, stack)
+    return result

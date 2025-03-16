@@ -68,9 +68,12 @@ def parse(s: str) -> AST:
                 next(t)
                 cond = parse_braced_expr()
                 expect(KeywordToken("do"))
-                body = parse_braced_expr()
+                body_expr = []
+                while t.peek(None) != KeywordToken("end"):
+                    body_expr.append(parse_braced_expr())
+    
                 expect(KeywordToken("end"))
-                return While(cond, body)
+                return While(cond, body_expr)
             case _:
                 return parse_cmp()
 
@@ -168,6 +171,10 @@ def parse(s: str) -> AST:
                     arg = parse_let()
                     expect(OperatorToken(')'))
                     return Call(var_name, arg)
+                elif t.peek(None) == OperatorToken(':='):
+                    expect(OperatorToken(':='))
+                    arg = parse_let()
+                    return Assign(var_name, arg)
                 return Var(var_name)
             case _:
                 raise ValueError("Unexpected token in expression")

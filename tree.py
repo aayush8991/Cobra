@@ -33,7 +33,7 @@ class If(AST):
 @dataclass
 class While(AST):
     condition: AST
-    body: AST
+    body: list[AST]
     _fields = ('condition', 'body')
 
 @dataclass
@@ -49,3 +49,9 @@ class Call(AST):
     name: str
     value: AST
     _fields = ('n', 'a')
+
+@dataclass
+class Assign(AST):
+    var: AST 
+    expr: AST  
+    _fields = ('var', 'expr')
