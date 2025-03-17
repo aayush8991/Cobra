@@ -1,8 +1,0 @@
-let outer be fun x is
-    { let inner be fun y is
-        {x + y} end in
-        inner(10)
-    end
-end in
-    outer(5)
-end

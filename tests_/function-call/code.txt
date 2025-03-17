@@ -1,4 +1,0 @@
-let square be fun x is
-    {x * x} end in
-    square(5)
-end

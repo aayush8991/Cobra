@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the root directory for tests
-TESTS_DIR="tests_"
+TESTS_DIR="tests"
 
 # Function to run a single test
 run_test() {

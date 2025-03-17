@@ -1,3 +1,0 @@
-fun dbl(a) is {3 + 3} in 
-    dbl(2) + dbl(3)
-end
