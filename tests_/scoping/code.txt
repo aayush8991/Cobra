@@ -1,0 +1,7 @@
+let x be 10 in
+    let y be 20 in
+        let x be x + y in
+            x
+        end
+    end
+end

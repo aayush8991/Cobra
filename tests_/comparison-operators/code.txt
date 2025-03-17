@@ -1,0 +1,9 @@
+let a be 10 in
+    let b be 20 in
+        if {a == b} then
+            {"a equals b"}
+        else
+            {"a does not equal b"}
+        end
+    end
+end

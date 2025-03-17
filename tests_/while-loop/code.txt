@@ -1,0 +1,11 @@
+let sum be 0 in
+    let i be 1 in
+        while {i <= 5} do
+            { let sum be sum + i in
+                let i be i + 1 in
+                    0
+                end
+            end }
+        end
+    end
+end

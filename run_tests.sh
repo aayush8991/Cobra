@@ -10,7 +10,7 @@ run_test() {
     local expected_file="$test_folder/expected.txt"
     
     # Run the test with a 5-second timeout
-    timeout 5s python3 main.py "$code_file" > "$test_folder/actual.txt" 2>&1
+    timeout 5s python3 helper.py "$code_file" > "$test_folder/actual.txt" 2>&1
     
     # Check if the command timed out
     if [ $? -eq 124 ]; then

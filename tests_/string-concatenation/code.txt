@@ -1,0 +1,5 @@
+let hello be "Hello, " in
+    let world be "World!" in
+        hello + world
+    end
+end

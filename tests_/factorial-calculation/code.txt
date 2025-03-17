@@ -1,0 +1,11 @@
+let n be 5 in
+    let result be 1 in
+        while {n > 0} do
+            { let result be result * n in
+                let n be n - 1 in
+                    0
+                end
+            end }
+        end
+    end
+end
