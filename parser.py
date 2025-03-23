@@ -31,22 +31,38 @@ def parse(s: str) -> AST:
             case _:
                 return parse_fun()
 
+    # def parse_fun():
+    #     match t.peek(None):
+    #         case KeywordToken("fun"):
+    #             next(t)
+    #             name = next(t)
+    #             expect(OperatorToken('('))
+    #             parameters = next(t)
+    #             expect(OperatorToken(')'))
+    #             expect(KeywordToken("is"))
+    #             body = parse_braced_expr()
+    #             expect(KeywordToken("in"))
+    #             expr = parse_let()
+    #             expect(KeywordToken("end"))
+    #             return Fun(name.v, Var(parameters.v), body, expr)
+    #         case _:
+    #             return parse_if()
     def parse_fun():
         match t.peek(None):
             case KeywordToken("fun"):
                 next(t)
-                name = next(t)
                 expect(OperatorToken('('))
-                parameters = next(t)
-                expect(OperatorToken(')'))
+                parameters = []
+                while t.peek(None) != OperatorToken(')'):
+                    parameters.append(Var(next(t).v))
+                    if t.peek(None) == OperatorToken(','):
+                        next(t)
+                expect(OperatorToken(')'))  
                 expect(KeywordToken("is"))
                 body = parse_braced_expr()
-                expect(KeywordToken("in"))
-                expr = parse_let()
-                expect(KeywordToken("end"))
-                return Fun(name.v, Var(parameters.v), body, expr)
+                return Fun(parameters, body)
             case _:
-                return parse_if()   
+                return parse_if()
 
     def parse_if():
         match t.peek(None):
@@ -164,13 +180,38 @@ def parse(s: str) -> AST:
                         return expr
                     case _:
                         raise ValueError("Missing closing parenthesis")
+            case OperatorToken('['):
+                next(t)
+                elements = []
+                while t.peek(None) != OperatorToken(']'):
+                    elements.append(parse_let())
+                    if t.peek(None) == OperatorToken(','):
+                        next(t)
+                expect(OperatorToken(']'))
+                return Array(elements)   
             case VariableToken(v):
                 var_name = next(t).v
+                if t.peek(None) == OperatorToken('['):
+                    # Array indexing
+                    array_var = Var(var_name)
+                    expect(OperatorToken('['))
+                    index = parse_let()
+                    expect(OperatorToken(']'))
+                    if t.peek(None) == OperatorToken(':='):
+                        # Array assignment
+                        expect(OperatorToken(':='))
+                        value = parse_let()
+                        return ArrayAssign(array_var, index, value)
+                    return ArrayIndex(array_var, index)
                 if t.peek(None) == OperatorToken('('):
                     expect(OperatorToken('('))
-                    arg = parse_let()
+                    args = []
+                    while t.peek(None) != OperatorToken(')'):
+                        args.append(parse_let())
+                        if t.peek(None) == OperatorToken(','):
+                            next(t)
                     expect(OperatorToken(')'))
-                    return Call(var_name, arg)
+                    return Call(Var(var_name), args)
                 elif t.peek(None) == OperatorToken(':='):
                     expect(OperatorToken(':='))
                     arg = parse_let()

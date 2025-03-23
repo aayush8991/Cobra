@@ -1,0 +1,2 @@
+Result: IntToken(v=Decimal('8'))
+

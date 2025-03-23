@@ -75,13 +75,13 @@ if __name__ == "__main__":
         exit(1)
 
     ast = parse(code)
-
+    # print(ast)
     # graph = visualize_ast(ast)
     # graph.render("ast_tree", view=True)
 
     print("-------------------------------------")
     abt = resolve(ast)
-
+    # print(abt)
     # graph = visualize_ast(abt)
     # graph.render("abt_tree", view=True)
 

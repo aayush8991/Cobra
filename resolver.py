@@ -27,11 +27,23 @@ def resolve(t: AST, env = None, fresh = None) -> AST:
         case Var(x, _):
             return Var(x, lookup(env, x))
         case Let(Var(x, _), e, f):
-            er = resolve(e, env, fresh)
-            env.append((x, i := fresh()))
-            fr = resolve(f, env, fresh)
-            env.pop()
-            return Let(Var(x, i), er, fr)
+            # er = resolve(e, env, fresh) normal case
+            # env.append((x, i := fresh()))
+            # fr = resolve(f, env, fresh)
+            # env.pop()
+            # return Let(Var(x, i), er, fr)
+            if isinstance(e, Fun):
+                env.append((x, i := fresh()))
+                er = resolve(e, env, fresh)
+                fr = resolve(f, env, fresh)
+                env.pop()
+                return Let(Var(x, i), er, fr)
+            else:
+                er = resolve(e, env, fresh)
+                env.append((x, i := fresh()))
+                fr = resolve(f, env, fresh)
+                env.pop()
+                return Let(Var(x, i), er, fr)
         case Assign(var, expr):
             expr_resolved = resolve(expr, env, fresh)
             try:
@@ -41,15 +53,41 @@ def resolve(t: AST, env = None, fresh = None) -> AST:
                 env.append((var, i := fresh()))
                 result = Assign(Var(var, i), expr_resolved)
                 return result
-        case Fun(f, Var(x, _), b, y):
-            env.append((x, i := fresh()))
-            br = resolve(b, env, fresh)
-            env.pop()
-            yr = resolve(y, env, fresh)
-            return Fun(f, Var(x, i), br, yr)
-        case Call(f, x):
-            xr = resolve(x, env, fresh)
-            return Call(f, xr)
+        # case Fun(f, Var(x, _), b, y):     normal case
+        #     env.append((x, i := fresh()))
+        #     br = resolve(b, env, fresh)
+        #     env.pop()
+        #     yr = resolve(y, env, fresh)
+        #     return Fun(f, Var(x, i), br, yr)
+        # case Call(f, x):
+        #     xr = resolve(x, env, fresh)
+        #     return Call(f, xr)
+        case Fun(parameters, body):
+            param_names = [param.v for param in parameters]
+            param_ids = [fresh() for _ in param_names]
+            env.extend(zip(param_names, param_ids))
+            body_resolved = resolve(body, env, fresh)
+            for _ in param_names:
+                env.pop()
+            
+            return Fun([Var(name, param_id) for name, param_id in zip(param_names, param_ids)], body_resolved)
+        case Call(func, args):
+            func_resolved = resolve(func, env, fresh)
+            args_resolved = [resolve(arg, env, fresh) for arg in args]
+            return Call(func_resolved, args_resolved)
+        case Array(elements):
+            return Array([resolve(elem, env, fresh) for elem in elements])
+        case ArrayIndex(array, index):
+            return ArrayIndex(
+                resolve(array, env, fresh),
+                resolve(index, env, fresh)
+            )
+        case ArrayAssign(array, index, value):
+            return ArrayAssign(
+                resolve(array, env, fresh),
+                resolve(index, env, fresh),
+                resolve(value, env, fresh)
+            )
         case BinOp(op, left, right):
             return BinOp(op, resolve(left, env, fresh), resolve(right, env, fresh))
         case If(cond, then, else_):

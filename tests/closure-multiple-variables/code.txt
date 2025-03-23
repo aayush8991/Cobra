@@ -1,0 +1,7 @@
+let x be 1 in
+    let y be 2 in
+        let f be fun(z) is { x + y + z } in
+            f(3)
+        end
+    end
+end

@@ -85,7 +85,7 @@ def lex(s: str) -> Iterator[Token]:
 
         else:
             match t := s[i]:
-                case '+' | '*' | '-' | '/' | '^' | '(' | ')' | '<' | '>' | '{' | '}':
+                case '+' | '*' | '-' | '/' | '^' | '(' | ')' | '<' | '>' | '{' | '}' | ',' | '[' | ']':
                     i = i + 1
                     yield OperatorToken(t)
                 case '=':

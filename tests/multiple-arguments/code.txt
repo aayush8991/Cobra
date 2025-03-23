@@ -1,0 +1,5 @@
+let add be fun(x, y, z) is {
+    x + y + z
+} in
+    add(1, 2, 3)
+end

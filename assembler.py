@@ -5,7 +5,7 @@ HALT, NOP, PUSH, POP, ADD, SUB, MUL, NEG = range(8)
 
 def do_codegen(t: AST, code):
     match t:
-        case IntToken(v): # Careful. I don't handle large numbers here.
+        case IntToken(v): 
             code.append(PUSH)
             code.append(int(v))
         case BinOp("+", l, r):

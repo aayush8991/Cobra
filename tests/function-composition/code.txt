@@ -1,0 +1,11 @@
+let compose be fun(f, g) is {
+    fun(x) is { f(g(x)) }
+} in
+    let double be fun(x) is { x * 2 } in
+        let addOne be fun(x) is { x + 1 } in
+            let doubleAndAddOne be compose(addOne, double) in
+                doubleAndAddOne(5)
+            end
+        end
+    end
+end

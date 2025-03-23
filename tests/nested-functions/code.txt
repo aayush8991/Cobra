@@ -1,9 +1,9 @@
-fun outer(x) is 
-{
-    fun inner(y) is {
+let outer be fun(x) is {
+    let inner be fun(y) is {
         x + y
-    }
-    in inner(10) end
-} 
-in outer(5)
+    } in
+        inner(10)
+    end
+} in
+    outer(5)
 end
