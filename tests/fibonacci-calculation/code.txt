@@ -1,6 +1,5 @@
-fun fib(a) is {
-    if {a < 2} then { 1 } else {fib(a-1) + fib(a-2)} end
-} 
-in
+let fib be fun(a) is {
+    if {a < 2} then {1} else {fib(a - 1) + fib(a - 2)} end
+} in
     fib(20)
 end

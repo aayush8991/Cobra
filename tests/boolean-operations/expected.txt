@@ -1,1 +1,1 @@
-Result:StringToken('a is not equal to b')
+Result: StringToken(v='a is not equal to b')

@@ -57,6 +57,10 @@ def lex(s: str) -> Iterator[Token]:
                 i = i + 1
             if t in keywords:
                 yield KeywordToken(t)
+            elif t == "true":
+                yield BoolToken(True)
+            elif t == "false":
+                yield BoolToken(False)
             else:
                 yield VariableToken(t)
 

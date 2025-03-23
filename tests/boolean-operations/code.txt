@@ -1,5 +1,5 @@
-let a be true in
-    let b be false in
+let a be 1 in
+    let b be 0 in
         if {a != b} then
             {"a is not equal to b"}
         else
