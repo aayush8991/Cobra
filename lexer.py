@@ -37,7 +37,7 @@ class OperatorToken(Token):
 class VariableToken(Token):
     v: str
 
-keywords = ["if", "then", "else", "end", "let", "in", "be", "while", "do", "fun", "is"]
+keywords = ["if", "then", "else", "end", "let", "in", "be", "while", "do", "fun", "is", "input"]
 
 def lex(s: str) -> Iterator[Token]:
     i = 0
@@ -89,7 +89,7 @@ def lex(s: str) -> Iterator[Token]:
 
         else:
             match t := s[i]:
-                case '+' | '*' | '-' | '/' | '^' | '(' | ')' | '<' | '>' | '{' | '}' | ',' | '[' | ']':
+                case '+' | '*' | '-' | '/' | '^' | '(' | ')' | '<' | '>' | '{' | '}' | ',' | '[' | ']' | '.' | ';':
                     i = i + 1
                     yield OperatorToken(t)
                 case '=':
@@ -103,4 +103,10 @@ def lex(s: str) -> Iterator[Token]:
                 case ':':
                     if i + 1 < len(s) and s[i + 1] == '=':
                         i = i + 2
-                        yield OperatorToken(':=')  
+                        yield OperatorToken(':=')
+                    else:
+                        i = i + 1
+                        yield OperatorToken(':')
+                case _:
+                    print(f"Unexpected character: {s[i]}")
+                    i = i + 1

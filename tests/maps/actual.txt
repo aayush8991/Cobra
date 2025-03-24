@@ -1,0 +1,1 @@
+Result: IntToken(v=Decimal('4'))

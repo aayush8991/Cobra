@@ -85,3 +85,32 @@ class ArrayAssign(AST):
     index: AST
     value: AST
     _fields = ('array', 'index', 'value')
+
+@dataclass
+class Map(AST):
+    entries: dict[AST, AST]
+    _fields = ('entries',)
+
+@dataclass
+class MapAssign(AST):
+    map: AST
+    key: AST
+    value: AST
+    _fields = ('map', 'key', 'value')
+
+@dataclass
+class MapAccess(AST):
+    map: AST
+    key: AST
+    _fields = ('map', 'key')
+
+@dataclass
+class Input(AST):
+    prompt: AST  # The prompt message to display
+    _fields = ('prompt',)
+
+@dataclass
+class ArrayInit(AST):
+    value: AST
+    size: AST
+    _fields = ('value', 'size')

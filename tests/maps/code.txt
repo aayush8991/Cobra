@@ -1,0 +1,8 @@
+let myMap be { "a": 1, "b": 2, "c": 3 } in
+    let updateMap be fun(m) is {
+        m."d" := 4
+    } in
+        updateMap(myMap);
+        myMap."d"
+    end
+end

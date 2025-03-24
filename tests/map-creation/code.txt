@@ -1,0 +1,3 @@
+let myMap be {"name": "John", "age": 25, "city": "NYC"} in
+    myMap."name"
+end

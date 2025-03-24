@@ -13,9 +13,18 @@ def parse(s: str) -> AST:
     
     def parse_braced_expr():
         expect(OperatorToken('{'))
-        expr = parse_let()
+        expr = parse_statements()
         expect(OperatorToken('}'))
         return expr
+
+    def parse_statements():
+        statements = [parse_let()]
+        while t.peek(None) == OperatorToken(';'):
+            next(t)
+            statements.append(parse_let())
+        if len(statements) == 1:
+            return statements[0]
+        return statements
 
     def parse_let():
         match t.peek(None):
@@ -25,28 +34,12 @@ def parse(s: str) -> AST:
                 expect(KeywordToken("be"))
                 e = parse_let()
                 expect(KeywordToken("in"))
-                f = parse_let()
+                f = parse_statements()  # Change from parse_let to parse_statements
                 expect(KeywordToken("end"))
                 return Let(Var(vt.v), e, f)
             case _:
                 return parse_fun()
 
-    # def parse_fun():
-    #     match t.peek(None):
-    #         case KeywordToken("fun"):
-    #             next(t)
-    #             name = next(t)
-    #             expect(OperatorToken('('))
-    #             parameters = next(t)
-    #             expect(OperatorToken(')'))
-    #             expect(KeywordToken("is"))
-    #             body = parse_braced_expr()
-    #             expect(KeywordToken("in"))
-    #             expr = parse_let()
-    #             expect(KeywordToken("end"))
-    #             return Fun(name.v, Var(parameters.v), body, expr)
-    #         case _:
-    #             return parse_if()
     def parse_fun():
         match t.peek(None):
             case KeywordToken("fun"):
@@ -87,7 +80,6 @@ def parse(s: str) -> AST:
                 body_expr = []
                 while t.peek(None) != KeywordToken("end"):
                     body_expr.append(parse_braced_expr())
-    
                 expect(KeywordToken("end"))
                 return While(cond, body_expr)
             case _:
@@ -182,13 +174,38 @@ def parse(s: str) -> AST:
                         raise ValueError("Missing closing parenthesis")
             case OperatorToken('['):
                 next(t)
-                elements = []
-                while t.peek(None) != OperatorToken(']'):
-                    elements.append(parse_let())
+                if t.peek(None) == OperatorToken('('):
+                    # Handle [(value, size)] format
+                    next(t)  # consume '('
+                    value = parse_let()
+                    expect(OperatorToken(','))
+                    size = parse_let()
+                    expect(OperatorToken(')'))
+                    expect(OperatorToken(']'))
+                    return ArrayInit(value, size)
+                else:
+                    # Handle normal array literal
+                    elements = []
+                    while t.peek(None) != OperatorToken(']'):
+                        elements.append(parse_let())
+                        if t.peek(None) == OperatorToken(','):
+                            next(t)
+                    expect(OperatorToken(']'))
+                    return Array(elements)
+            case OperatorToken('{'):
+                next(t)
+                entries = {}
+                while t.peek(None) != OperatorToken('}'):
+                    key = parse_let()
+                    if isinstance(key, StringToken):
+                        key = key.v  # Convert StringToken to plain string
+                    expect(OperatorToken(':'))
+                    value = parse_let()
+                    entries[key] = value
                     if t.peek(None) == OperatorToken(','):
                         next(t)
-                expect(OperatorToken(']'))
-                return Array(elements)   
+                expect(OperatorToken('}'))
+                return Map(entries)
             case VariableToken(v):
                 var_name = next(t).v
                 if t.peek(None) == OperatorToken('['):
@@ -216,7 +233,21 @@ def parse(s: str) -> AST:
                     expect(OperatorToken(':='))
                     arg = parse_let()
                     return Assign(var_name, arg)
+                elif t.peek(None) == OperatorToken('.'):
+                    expect(OperatorToken('.'))
+                    key = parse_atom()  # Changed from parse_let() to parse_atom()
+                    if t.peek(None) == OperatorToken(':='):
+                        expect(OperatorToken(':='))
+                        value = parse_let()
+                        return MapAssign(Var(var_name), key, value)
+                    return MapAccess(Var(var_name), key)
                 return Var(var_name)
+            case KeywordToken("input"):
+                next(t)
+                expect(OperatorToken('('))
+                prompt = parse_let()
+                expect(OperatorToken(')'))
+                return Input(prompt)
             case _:
                 raise ValueError("Unexpected token in expression")
 

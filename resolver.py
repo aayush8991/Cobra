@@ -98,5 +98,18 @@ def resolve(t: AST, env = None, fresh = None) -> AST:
             for expr in body:
                 body_resolved.append(resolve(expr, env, fresh))
             return While(condition_resolved, body_resolved)
+        case Map(entries):
+            resolved_entries = {resolve(key, env, fresh): resolve(value, env, fresh) for key, value in entries.items()}
+            return Map(resolved_entries)
+        case MapAssign(map, key, value):
+            return MapAssign(resolve(map, env, fresh), resolve(key, env, fresh), resolve(value, env, fresh))
+        case MapAccess(map, key):
+            return MapAccess(resolve(map, env, fresh), resolve(key, env, fresh))
+        case ArrayInit(value, size):
+            return ArrayInit(
+                resolve(value, env, fresh),
+                resolve(size, env, fresh)
+            )
         case _:
             return t
+        
