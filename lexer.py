@@ -37,7 +37,7 @@ class OperatorToken(Token):
 class VariableToken(Token):
     v: str
 
-keywords = ["if", "then", "else", "end", "let", "in", "be", "while", "do", "fun", "is", "input"]
+keywords = ["if", "then", "else", "end", "let", "in", "be", "while", "do", "fun", "is", "input", "and", "or", "not"]
 
 def lex(s: str) -> Iterator[Token]:
     i = 0
@@ -89,7 +89,7 @@ def lex(s: str) -> Iterator[Token]:
 
         else:
             match t := s[i]:
-                case '+' | '*' | '-' | '/' | '^' | '(' | ')' | '<' | '>' | '{' | '}' | ',' | '[' | ']' | '.' | ';':
+                case '+' | '*' | '-' | '/' | '^' | '(' | ')' | '<' | '>' | '{' | '}' | ',' | '[' | ']' | '.' | ';' | '%':
                     i = i + 1
                     yield OperatorToken(t)
                 case '=':

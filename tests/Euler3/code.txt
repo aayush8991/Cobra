@@ -1,0 +1,21 @@
+let gcd be fun(a, b) is {
+    if {b == 0} then {
+        a
+    } else {
+        gcd(b, a % b)
+    } end
+} in
+    let lcm be fun(a, b) is {
+        (a * b) / gcd(a, b)
+    } in
+        let smallestMultiple be fun(n, current) is {
+            if {n == 1} then {
+                current
+            } else {
+                smallestMultiple(n - 1, lcm(current, n))
+            } end
+        } in
+            smallestMultiple(20, 1)
+        end
+    end
+end

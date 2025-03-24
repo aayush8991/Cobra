@@ -83,7 +83,27 @@ def parse(s: str) -> AST:
                 expect(KeywordToken("end"))
                 return While(cond, body_expr)
             case _:
-                return parse_cmp()
+                return parse_or()
+
+    def parse_or():
+        ast = parse_and()
+        while True:
+            match t.peek(None):
+                case KeywordToken("or"):
+                    next(t)
+                    ast = BinOp("or", ast, parse_and())
+                case _:
+                    return ast
+
+    def parse_and():
+        ast = parse_cmp()
+        while True:
+            match t.peek(None):
+                case KeywordToken("and"):
+                    next(t)
+                    ast = BinOp("and", ast, parse_cmp())
+                case _:
+                    return ast
 
     def parse_cmp():
         l = parse_sub()
@@ -137,11 +157,19 @@ def parse(s: str) -> AST:
                     return ast
     
     def parse_div():
-        ast = parse_pow()
+        ast = parse_mod()
         match t.peek(None):
             case OperatorToken('/'):
                 next(t)
-                ast = BinOp("/", ast, parse_div())
+                ast = BinOp("/", ast, parse_mod())
+        return ast
+    
+    def parse_mod():
+        ast = parse_pow()
+        match t.peek(None):
+            case OperatorToken('%'):
+                next(t)
+                ast = BinOp("%", ast, parse_pow())
         return ast
     
     def parse_pow():
@@ -149,11 +177,14 @@ def parse(s: str) -> AST:
         match t.peek(None):
             case OperatorToken('^'):
                 next(t)
-                ast = BinOp("^", ast, parse_pow())
+                ast = BinOp("^", ast, parse_atom())
         return ast
 
     def parse_atom():
         match t.peek(None):
+            case BoolToken(v):
+                next(t)
+                return BoolToken(v)
             case IntToken(v):
                 next(t)
                 return IntToken(v)

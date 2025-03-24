@@ -1,13 +1,1 @@
-let name be input("Enter your name: ") in
-    let age be input("Enter your age: ") in
-        let greeting be "Hello, " in
-            let message be greeting + name in
-                if {age > 18} then
-                    {message + ". You are an adult!"}
-                else
-                    {message + ". You are a minor!"}
-                end
-            end
-        end
-    end
-end
+if {1 + 1 == 2} then {2} else {10} end
