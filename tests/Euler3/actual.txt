@@ -1,0 +1,1 @@
+Result: FloatToken(v=Decimal('232792560'))

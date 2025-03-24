@@ -199,6 +199,29 @@ def eval_math(tree: BinOp, stack):
         right_val = right
 
     match tree.op:
+        case "or":
+            if isinstance(left, (IntToken, BoolToken)) and isinstance(right, (IntToken, BoolToken)):
+                left_val = left.v if isinstance(left, IntToken) else int(left.v)
+                right_val = right.v if isinstance(right, IntToken) else int(right.v)
+                return IntToken(1 if left_val != 0 or right_val != 0 else 0)
+            else:
+                raise TypeError(f"Invalid operation: {type(left).__name__} or {type(right).__name__}")
+        case "and":
+            if isinstance(left, (IntToken, BoolToken)) and isinstance(right, (IntToken, BoolToken)):
+                left_val = left.v if isinstance(left, IntToken) else int(left.v)
+                right_val = right.v if isinstance(right, IntToken) else int(right.v)
+                return IntToken(1 if left_val != 0 and right_val != 0 else 0)
+            else:
+                raise TypeError(f"Invalid operation: {type(left).__name__} and {type(right).__name__}")
+        case "%":
+            if isinstance(left, (IntToken, FloatToken)) and isinstance(right, (IntToken, FloatToken)):
+                if right.v == 0:
+                    raise ZeroDivisionError("Modulo by zero")
+                if isinstance(left, FloatToken) or isinstance(right, FloatToken):
+                    return FloatToken(left.v % right.v)
+                return IntToken(left.v % right.v)
+            else:
+                raise TypeError(f"Invalid operation: {type(left).__name__} % {type(right).__name__}")
         case "+":
             if isinstance(left_val, (int, float, Decimal)) and isinstance(right_val, (int, float, Decimal)):
                 result = left_val + right_val
@@ -258,11 +281,17 @@ def eval_math(tree: BinOp, stack):
         case "==":
             if isinstance(left, (IntToken, FloatToken)) and isinstance(right, (IntToken, FloatToken)):
                 return BoolToken(Decimal(left.v) == Decimal(right.v))
+            elif isinstance(left, StringToken) and isinstance(right, StringToken):
+                return BoolToken(left.v == right.v)
+            elif isinstance(left, BoolToken) and isinstance(right, BoolToken):
+                return BoolToken(left.v == right.v)
             else:
                 raise TypeError(f"Invalid operation: {type(left).__name__} == {type(right).__name__}")
         case "!=":
             if isinstance(left, (IntToken, FloatToken)) and isinstance(right, (IntToken, FloatToken)):
                 return BoolToken(Decimal(left.v) != Decimal(right.v))
+            elif isinstance(left, BoolToken) and isinstance(right, BoolToken):
+                return BoolToken(left.v != right.v)
             else:
                 raise TypeError(f"Invalid operation: {type(left).__name__} == {type(right).__name__}")
 
@@ -283,4 +312,5 @@ def eval_loop(tree: While, stack):
             break
         for expr in tree.body:
             result = e(expr, stack)
+            # print(result)
     return result
