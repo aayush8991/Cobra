@@ -110,6 +110,8 @@ def resolve(t: AST, env = None, fresh = None) -> AST:
                 resolve(value, env, fresh),
                 resolve(size, env, fresh)
             )
+        case Print(value):
+            return Print(resolve(value, env, fresh))
         case _:
             return t
         

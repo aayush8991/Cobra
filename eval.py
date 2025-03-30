@@ -180,6 +180,21 @@ def e(tree: AST, stack=None):
                     # If not a number, return as string
                     return StringToken(user_input)
             raise TypeError("Input prompt must be a string")
+        case Print(value):
+            result = e(value, stack)
+            if isinstance(result, IntToken):
+                print(result.v)
+            elif isinstance(result, FloatToken):
+                print(result.v)
+            elif isinstance(result, StringToken):
+                print(result.v)
+            elif isinstance(result, list):
+                print(result)  
+            elif isinstance(result, dict):
+                print(result)  
+            else:
+                print(result)  
+            return result
         case _:
             raise ValueError(f"Unknown AST node := {tree}")
 

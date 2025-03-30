@@ -18,13 +18,24 @@ def parse(s: str) -> AST:
         return expr
 
     def parse_statements():
-        statements = [parse_let()]
+        statements = [parse_print()]
         while t.peek(None) == OperatorToken(';'):
             next(t)
-            statements.append(parse_let())
+            statements.append(parse_print())
         if len(statements) == 1:
             return statements[0]
         return statements
+    
+    def parse_print():
+        match t.peek(None):
+            case KeywordToken("print"):
+                next(t)
+                expect(OperatorToken('('))
+                expr = parse_let()
+                expect(OperatorToken(')'))
+                return Print(expr)
+            case _:
+                return parse_let()
 
     def parse_let():
         match t.peek(None):
@@ -282,7 +293,7 @@ def parse(s: str) -> AST:
             case _:
                 raise ValueError("Unexpected token in expression")
 
-    result = parse_let()
+    result = parse_print()
     if result is None:
         raise ValueError("Invalid syntax")
     return result
