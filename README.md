@@ -20,40 +20,100 @@ Welcome to Cobra, a powerful and expressive programming language that combines d
 - Supports basic arithmetic operations: `+`, `-`, `*`, `/`.
 - Parentheses for precedence handling.
 - Uses Abstract Syntax Trees (ASTs) for efficient evaluation and optimization.
+#### Example:
+```plaintext
+let a be 10 in
+    let b be 5 in
+        let result be (a + b) * (a - b) / b in
+            print(result)
+        end
+    end
+end
+```
 
 ### Conditionals
 - Implements `if-else` statements.
 - Supports boolean expressions (`x > 5`, `y == 10`).
 - Short-circuit evaluation for `&&` and `||`.
-
+#### Example:
+```plaintext
+let a be 10 in
+    if {a > 5 and a < 15} then
+        print("a is between 5 and 15")
+    else
+        print("a is not between 5 and 15")
+    end
+end
+```
 ### Variables
 - Supports variable declaration and assignment (`x = 10`).
 - Symbol table for managing names, types, and memory locations.
 - Currently supports global variables, with local scoping planned.
-
+#### Example:
+```plaintext
+let x be 10 in
+    let y be x + 5 in
+        print(y)
+    end
+end
+```
 ### Functions (Value-Returning)
 - Basic function definitions and calls implemented.
 - Supports single-parameter functions with return values.
 - Function table tracks names, parameters, and return types.
-
+#### Example:
+```plaintext
+let square be fun(x) is {
+    x * x
+} in
+    print(square(5))
+end
+```
 ### Loops
 - **While Loop** implemented.
 - Evaluates loop conditions and executes body until condition is `false`.
 - Enables repetitive task execution.
-
+#### Example:
+```plaintext
+let i be 0 in
+    let sum be 0 in
+        while {i < 5} do
+            sum := sum + i
+            i := i + 1
+        end;
+        print(sum)
+    end
+end
+```
 ### Lexical Scoping
 - Symbol table supports hierarchical scopes.
 - New scopes pushed onto a stack when entering blocks/functions.
 - Variables resolved by traversing the scope chain.
-
-### Print Functions
-- AST tree image generation supported.
-- Dedicated `print` function required for outputting results.
+#### Example:
+```plaintext
+let x be 5 in
+    let f be fun(y) is {x} in
+        let g be fun(z) is {let x be 6 in f(z) end} in
+            g(0)
+        end
+    end
+end
+```
 
 ### Arrays
 - Implemented support for arrays.
 - Arrays can be indexed and iterated over using loops.
-
+#### Example:
+```plaintext
+let arr be [1, 2, 3, 4, 5] in
+    let i be 0 in
+        while {i < 5} do
+            {print(arr[i])}
+            {i := i + 1}
+        end
+    end
+end
+```
 ### Bytecode Generation
 - Optimized AST-to-bytecode translation.
 - Efficient bytecode execution for arithmetic, conditionals, loops, and functions.
@@ -97,6 +157,14 @@ end
 ### First-Class Functions
 - Functions can be assigned to variables, passed as arguments, and returned from other functions.
 - Enables higher-order functions and modular programming.
+#### Example:
+```plaintext
+let apply be fun(f, x) is { f(x) } in
+    let double be fun(n) is { n * 2 } in
+        apply(double, 5)
+    end
+end
+```
 
 ### Lexical Scoping (Static Scope Resolution)
 - Variables are resolved based on their position in the source code.
