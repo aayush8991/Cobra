@@ -182,11 +182,7 @@ end
 # 👋 Your First Program
 Lets now write our first program in Cobra 🐍.
 ```
-let hello be "Hello, " in
-    let world be "World!" in
-        hello + world
-    end
-end
+print("Hello World")
 ```
 
 
