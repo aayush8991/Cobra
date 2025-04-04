@@ -1,3 +1,5 @@
+![image](https://github.com/user-attachments/assets/44620a70-5440-4163-9468-5ddd88e3fe1d)
+
 # 📖 Getting Started with Cobra
 Welcome to Cobra, a powerful and expressive programming language that combines dynamic typing, lexical scoping, first-class functions, and structured syntax. This guide will help you write your first program and understand the core features of the language.
 
