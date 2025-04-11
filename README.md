@@ -221,11 +221,14 @@ The flow can be observed using the AST,
 | **Testing & Debugging**        | All Members         | Unit tests, integration tests. |
 | **Documentation & Packaging**  | Aashmun & Aayush    | User-friendly documentation and packaging. |
 
-<<<<<<< HEAD
 
 <iframe src="https://docs.google.com/presentation/d/1M_ANAZm4amV9q1QWfF7wMY5ip1FoqRIlDIwmkreqP8w/edit#slide=id.p" width="800" height="450"></iframe>
 
-=======
->>>>>>> e2ca46e6a2f935afee076aa4401c0fb1fd9ce6e4
+## Run
+To run the code 
+```
+crc <file>.cr
+```
+
 #
 This documentation will be updated as development progresses. 🚀
