@@ -66,7 +66,7 @@ from resolver import *
 
 if __name__ == "__main__":
   
-    file_path = "code.txt"
+    file_path = "code.cr"
     try:
         with open(file_path, "r") as f:
             code = f.read()

@@ -1,0 +1,19 @@
+{
+    "name": "cobra-icon-theme",
+    "displayName": "Cobra File Icon Theme",
+    "description": "A file icon theme that shows your Cobra logo for .cr files",
+    "version": "0.0.1",
+    "engines": {
+      "vscode": "^1.80.0"
+    },
+    "contributes": {
+      "iconThemes": [
+        {
+          "id": "cobra-icon-theme",
+          "label": "Cobra Icon Theme",
+          "path": "./icon-theme.json"
+        }
+      ]
+    }
+  }
+  
