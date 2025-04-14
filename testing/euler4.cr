@@ -1,0 +1,18 @@
+let sumMultiples be fun(n) is {
+    let i be 0 in
+        let total be 0 in
+            while {i < n} do
+                {i := i + 1}
+                {if {(i-1) % 3 == 0 or (i-1) % 5 == 0} then {
+                    total := total + i
+                } else {
+                    total := total
+                } end}
+                
+            end
+        
+        end
+    end
+} in
+    sumMultiples(1000)
+end

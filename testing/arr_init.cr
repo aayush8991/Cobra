@@ -1,0 +1,14 @@
+let arr be [(1, 3)] in 
+    let sum be fun(a) is {
+        let i be 0 in
+            let total be 0 in
+                while {i < 3} do
+                    {i := i + 1}
+                    {total := total + a[i-1]}
+                end
+            end
+        end
+    } in
+        sum(arr)  
+    end
+end
