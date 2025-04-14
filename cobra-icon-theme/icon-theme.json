@@ -1,0 +1,15 @@
+{
+    "iconDefinitions": {
+      "cobra-icon": {
+        "iconPath": "./icons/cobra-icon.png"
+      }
+    },
+    "fileExtensions": {
+      "cr": "cobra-icon",
+    },
+    "fileNames": {},
+    "languageIds": {},
+    "light": {},
+    "highContrast": {}
+  }
+  
