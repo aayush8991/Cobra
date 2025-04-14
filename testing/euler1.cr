@@ -1,0 +1,23 @@
+let sumOfSquares be fun(n) is {
+    if {n == 0} then {
+        0
+    } else {
+        (n * n) + sumOfSquares(n - 1)
+    } end
+} in
+    let squareOfSum be fun(n) is {
+        if {n == 0} then {
+            0
+        } else {
+            let sum be n + squareOfSum(n - 1) in
+                sum
+            end
+        } end
+    } in
+        let difference be fun(n) is {
+            (squareOfSum(n) * squareOfSum(n)) - sumOfSquares(n)
+        } in
+            difference(100)
+        end
+    end
+end
