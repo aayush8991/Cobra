@@ -1,8 +1,8 @@
 let sum be 0 in
     let i be 1 in
         while {i < 6} do
-            {i := i + 1}
-            {sum := sum + (i - 1)}
+            i := i + 1;
+            sum := sum + (i - 1)
         end
     end
 end

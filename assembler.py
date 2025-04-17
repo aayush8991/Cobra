@@ -22,6 +22,7 @@ RET = 16    # Return from function
 ARRAY = 17  # Create array
 ALOAD = 18  # Load from array
 ASTORE = 19 # Store in array
+NOP = 20   # No operation
 
 def do_codegen(t: AST, code, env=None):
     if env is None:
@@ -145,7 +146,28 @@ def codegen(t):
 
 # expr_cg = BinOp ("*", BinOp("+", IntToken("2"), IntToken("3")), IntToken("5"))
 # expr_cg = Let(v=Var(v='arr', i=None), e=Array(elements=[IntToken(v=Decimal('1')), IntToken(v=Decimal('4')), IntToken(v=Decimal('3'))]), f=Let(v=Var(v='sum', i=None), e=Fun(parameters=[Var(v='a', i=None)], body=Let(v=Var(v='i', i=None), e=IntToken(v=Decimal('0')), f=Let(v=Var(v='total', i=None), e=IntToken(v=Decimal('0')), f=While(condition=BinOp(op='<', left=Var(v='i', i=None), right=IntToken(v=Decimal('3'))), body=[Assign(var='i', expr=BinOp(op='+', left=Var(v='i', i=None), right=IntToken(v=Decimal('1')))), Assign(var='total', expr=BinOp(op='+', left=Var(v='total', i=None), right=ArrayIndex(array=Var(v='a', i=None), index=BinOp(op='-', left=Var(v='i', i=None), right=IntToken(v=Decimal('1'))))))])))), f=Call(func=Var(v='sum', i=None), args=[Var(v='arr', i=None)])))
-expr_cg = Let(v=Var(v='arr', i=1), e=Array(elements=[IntToken(v=Decimal('1')), IntToken(v=Decimal('4')), IntToken(v=Decimal('3'))]), f=Let(v=Var(v='sum', i=2), e=Fun(parameters=[Var(v='a', i=3)], body=Let(v=Var(v='i', i=4), e=IntToken(v=Decimal('0')), f=Let(v=Var(v='total', i=5), e=IntToken(v=Decimal('0')), f=While(condition=BinOp(op='<', left=Var(v='i', i=4), right=IntToken(v=Decimal('3'))), body=[Assign(var=Var(v='i', i=4), expr=BinOp(op='+', left=Var(v='i', i=4), right=IntToken(v=Decimal('1')))), Assign(var=Var(v='total', i=5), expr=BinOp(op='+', left=Var(v='total', i=5), right=ArrayIndex(array=Var(v='a', i=3), index=BinOp(op='-', left=Var(v='i', i=4), right=IntToken(v=Decimal('1'))))))])))), f=Call(func=Var(v='sum', i=2), args=[Var(v='arr', i=1)])))
+# expr_cg = Let(v=Var(v='arr', i=1), e=Array(elements=[IntToken(v=Decimal('1')), IntToken(v=Decimal('4')), IntToken(v=Decimal('3'))]), f=Let(v=Var(v='sum', i=2), e=Fun(parameters=[Var(v='a', i=3)], body=Let(v=Var(v='i', i=4), e=IntToken(v=Decimal('0')), f=Let(v=Var(v='total', i=5), e=IntToken(v=Decimal('0')), f=While(condition=BinOp(op='<', left=Var(v='i', i=4), right=IntToken(v=Decimal('3'))), body=[Assign(var=Var(v='i', i=4), expr=BinOp(op='+', left=Var(v='i', i=4), right=IntToken(v=Decimal('1')))), Assign(var=Var(v='total', i=5), expr=BinOp(op='+', left=Var(v='total', i=5), right=ArrayIndex(array=Var(v='a', i=3), index=BinOp(op='-', left=Var(v='i', i=4), right=IntToken(v=Decimal('1'))))))])))), f=Call(func=Var(v='sum', i=2), args=[Var(v='arr', i=1)])))
+expr_cg = Let(
+    v=Var(v='i', i=None),  # Declare variable i
+    e=IntToken(v=Decimal('0')),  # Initialize i = 0
+    f=While(
+        condition=BinOp(
+            op='<', 
+            left=Var(v='i', i=None),  # i
+            right=IntToken(v=Decimal('5'))  # 5
+        ),
+        body=[
+            Assign(
+                var=Var(v='i', i=None),  # i
+                expr=BinOp(
+                    op='+', 
+                    left=Var(v='i', i=None),  # i
+                    right=IntToken(v=Decimal('1'))  # i + 1
+                )
+            )
+        ]
+    )
+)
 print(codegen(expr_cg))
 
 # def codegen(t):

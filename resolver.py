@@ -77,17 +77,45 @@ def resolve(t: AST, env = None, fresh = None) -> AST:
             return Call(func_resolved, args_resolved)
         case Array(elements):
             return Array([resolve(elem, env, fresh) for elem in elements])
-        case ArrayIndex(array, index):
+        # case ArrayIndex(array, index):
+        #     return ArrayIndex(
+        #         resolve(array, env, fresh),
+        #         resolve(index, env, fresh)
+        #     )
+        # case ArrayAssign(array, index, value):
+        #     return ArrayAssign(
+        #         resolve(array, env, fresh),
+        #         resolve(index, env, fresh),
+        #         resolve(value, env, fresh)
+        #     )
+        
+        case ArrayIndex(array, indices):
+            # If indices is not a list, wrap it in a list for backwards compatibility
+            if not isinstance(indices, list):
+                resolved_indices = resolve(indices, env, fresh)
+            else:
+                # Resolve each index in the list
+                resolved_indices = [resolve(idx, env, fresh) for idx in indices]
+            
             return ArrayIndex(
                 resolve(array, env, fresh),
-                resolve(index, env, fresh)
+                resolved_indices
             )
-        case ArrayAssign(array, index, value):
+            
+        case ArrayAssign(array, indices, value):
+            # If indices is not a list, wrap it in a list for backwards compatibility
+            if not isinstance(indices, list):
+                resolved_indices = resolve(indices, env, fresh)
+            else:
+                # Resolve each index in the list
+                resolved_indices = [resolve(idx, env, fresh) for idx in indices]
+                
             return ArrayAssign(
                 resolve(array, env, fresh),
-                resolve(index, env, fresh),
+                resolved_indices,
                 resolve(value, env, fresh)
             )
+
         case BinOp(op, left, right):
             return BinOp(op, resolve(left, env, fresh), resolve(right, env, fresh))
         case If(cond, then, else_):

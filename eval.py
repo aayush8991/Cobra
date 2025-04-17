@@ -24,27 +24,67 @@ def e(tree: AST, stack=None):
             return lookup(stack, v, i)
         case Array(elements):
             return [e(elem, stack) for elem in elements]
-        case ArrayIndex(array, index):
-            arr = e(array, stack)
-            idx = e(index, stack)
-            if not isinstance(idx, IntToken):
-                raise TypeError("Array index must be an integer")
-            if not isinstance(arr, list):
-                raise TypeError("Cannot index into non-array")
-            if idx.v < 0 or idx.v >= len(arr):
-                raise IndexError("Array index out of bounds")
-            return arr[int(idx.v)]
-        case ArrayAssign(array, index, value):
-            arr = e(array, stack)
-            idx = e(index, stack)
+        # case ArrayIndex(array, index):
+        #     arr = e(array, stack)
+        #     idx = e(index, stack)
+        #     if not isinstance(idx, IntToken):
+        #         raise TypeError("Array index must be an integer")
+        #     if not isinstance(arr, list):
+        #         raise TypeError("Cannot index into non-array")
+        #     if idx.v < 0 or idx.v >= len(arr):
+        #         raise IndexError("Array index out of bounds")
+        #     return arr[int(idx.v)]
+        # case ArrayAssign(array, index, value):
+        #     arr = e(array, stack)
+        #     idx = e(index, stack)
+        #     val = e(value, stack)
+        #     if not isinstance(idx, IntToken):
+        #         raise TypeError("Array index must be an integer")
+        #     if not isinstance(arr, list):
+        #         raise TypeError("Cannot index into non-array")
+        #     if idx.v < 0 or idx.v >= len(arr):
+        #         raise IndexError("Array index out of bounds")
+        #     arr[int(idx.v)] = val
+        #     return val
+        
+        case ArrayIndex(array, indices):
+            current = e(array, stack)
+            for idx in indices:
+                idx_val = e(idx, stack)
+                if not isinstance(idx_val, IntToken):
+                    raise TypeError("Array/string index must be an integer")
+                if isinstance(current, StringToken):
+                    if idx_val.v < 0 or idx_val.v >= len(current.v):
+                        raise IndexError(f"String index out of bounds: {idx_val.v}, string length: {len(current.v)}")
+                    current = StringToken(current.v[int(idx_val.v)])
+                elif not isinstance(current, list):
+                    raise TypeError(f"Cannot index into {type(current).__name__} - only arrays and strings are indexable")
+                else:
+                    if idx_val.v < 0 or idx_val.v >= len(current):
+                        raise IndexError(f"Array index out of bounds: {idx_val.v}, array length: {len(current)}")
+                    current = current[int(idx_val.v)]
+            return current
+        case ArrayAssign(array, indices, value):
+            base_arr = e(array, stack)
             val = e(value, stack)
-            if not isinstance(idx, IntToken):
+            current = base_arr
+            for i in range(len(indices) - 1):
+                idx_val = e(indices[i], stack)
+                if not isinstance(idx_val, IntToken):
+                    raise TypeError("Array index must be an integer")
+                if not isinstance(current, list):
+                    raise TypeError("Cannot index into non-array")
+                if idx_val.v < 0 or idx_val.v >= len(current):
+                    raise IndexError(f"Array index out of bounds: {idx_val.v}, array length: {len(current)}")
+                current = current[int(idx_val.v)]
+            final_idx = e(indices[-1], stack)
+            if not isinstance(final_idx, IntToken):
                 raise TypeError("Array index must be an integer")
-            if not isinstance(arr, list):
+            if not isinstance(current, list):
                 raise TypeError("Cannot index into non-array")
-            if idx.v < 0 or idx.v >= len(arr):
-                raise IndexError("Array index out of bounds")
-            arr[int(idx.v)] = val
+            if final_idx.v < 0 or final_idx.v >= len(current):
+                raise IndexError(f"Array index out of bounds: {final_idx.v}, array length: {len(current)}")
+            current[int(final_idx.v)] = val
             return val
         case ArrayInit(value, size):
             initial_value = e(value, stack)

@@ -1,5 +1,5 @@
-let add be fun(x, y, z) is {
+let add be fun(x, y, z) is 
     x + y + z
-} in
+ in
     add(1, 2, 3)
 end

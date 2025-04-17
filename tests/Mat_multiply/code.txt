@@ -1,0 +1,27 @@
+let mata be [[1, 2, 3], [4, 5, 6], [7, 8, 9]] in
+    let matb be [[9, 8, 7], [6, 5, 4], [3, 2, 1]] in
+        let result be [[0, 0, 0], [0, 0, 0], [0, 0, 0]] in
+            let multiplymatrices be fun(a, b, res) is 
+                let i be 0 in
+                    while {i < 3} do
+                        let j be 0 in
+                            while {j < 3} do
+                                let k be 0 in
+                                    while {k < 3} do
+                                        res[i][j] := res[i][j] + a[i][k] * b[k][j];
+                                        k := k + 1
+                                    end
+                                end;
+                                j := j + 1
+                            end
+                        end;
+                        i := i + 1
+                    end
+                end
+             in
+                multiplymatrices(mata, matb, result)
+            end;
+            print(result)
+        end
+    end
+end

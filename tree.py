@@ -76,13 +76,13 @@ class Array(AST):
 @dataclass
 class ArrayIndex(AST):
     array: AST
-    index: AST
+    index: list[AST]
     _fields = ('array', 'index')
 
 @dataclass
 class ArrayAssign(AST):
     array: AST
-    index: AST
+    index: list[AST]
     value: AST
     _fields = ('array', 'index', 'value')
 

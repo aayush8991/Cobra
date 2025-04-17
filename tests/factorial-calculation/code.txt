@@ -1,8 +1,8 @@
 let n be 5 in
     let result be 1 in
         while {n > 0} do
-            { n:= n - 1 }
-            {result := result * (n + 1)}
+             n:= n - 1; 
+            result := result * (n + 1)
         end
     end
 end

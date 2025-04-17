@@ -1,5 +1,5 @@
-let fib be fun(a) is {
+let fib be fun(a) is 
     a * a
-} in
+ in
     fib(5)
 end

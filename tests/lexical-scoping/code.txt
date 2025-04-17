@@ -1,7 +1,10 @@
 let x be 5 in
-    let f be fun(y) is {x} in
-        let g be fun(z) is {let x be 6 in f(z) end} in
-            g(0)
+    let f be fun(y) is x in
+        let g be fun(z) is 
+            let x be 6 
+                in f(z) 
+            end 
+        in g(0)
         end
     end
 end

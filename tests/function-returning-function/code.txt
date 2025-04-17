@@ -1,6 +1,6 @@
-let makeAdder be fun(x) is {
-    fun(y) is { x + y }
-} in
+let makeAdder be fun(x) is 
+    fun(y) is  x + y 
+ in
     let add be makeAdder(5) in
         add(3)
     end

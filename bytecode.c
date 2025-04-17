@@ -151,19 +151,40 @@ end:
 int main() {
     // Example: Create array [1,2,3], set arr[1] = 10, return arr[1]
     uint8_t insns[] = {
-        PUSH, 1,
-        PUSH, 2,
-        PUSH, 3,
-        PUSH, 3,  // array size
-        ARRAY, 0,
-        PUSH, 0,  // array_id
-        PUSH, 1,  // index
-        PUSH, 10, // new value
-        ASTORE, 0,
-        PUSH, 0,  // array_id
-        PUSH, 1,  // index
-        ALOAD, 0,
-        HALT, 0
+        // 0x01, 1,
+        // 0x01, 2,
+        // 0x01, 3,
+        // 0x01, 3,  // array size
+        // 0x11, 0,
+        // 0x01, 0,  // array_id
+        // 0x01, 1,  // index
+        // 0x01, 10, // new value
+        // 0x13, 0,
+        // 0x01, 0,  // array_id
+        // 0x01, 1,  // index
+        // 0x12, 0,
+        // 0x00, 0
+
+        0x01, 0x00,  // PUSH 0       - Initialize i = 0
+        0x0E, 0x00,  // STORE 0      - Store to variable 0
+        
+        // Loop start (byte 4)
+        0x0D, 0x00,  // LOAD 0       - Load i
+        0x01, 0x05,  // PUSH 5       - Load 5
+        0x09, 0x00,  // LT 0         - Compare i < 5
+        0x0C, 0x16,  // JMPF 22      - If false jump to end (byte 22)
+        
+        // Loop body
+        0x0D, 0x00,  // LOAD 0       - Load i
+        0x01, 0x01,  // PUSH 1       - Push 1
+        0x03, 0x00,  // ADD 0        - i + 1
+        0x0E, 0x00,  // STORE 0      - i = i + 1
+        
+        0x0B, 0x04,  // JMP 4        - Jump back to loop start (byte 4)
+        
+        // End of loop (byte 22)
+        0x0D, 0x00,  // LOAD 0       - Load final value of i (should be 5)
+        0x00, 0x00   // HALT    
     };
     
     printf("Result: %d\n", execute(insns));

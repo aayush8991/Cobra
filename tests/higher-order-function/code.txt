@@ -1,5 +1,5 @@
-let apply be fun(f, x) is { f(x) } in
-    let double be fun(n) is { n * 2 } in
+let apply be fun(f, x) is  f(x)  in
+    let double be fun(n) is  n * 2  in
         apply(double, 5)
     end
 end

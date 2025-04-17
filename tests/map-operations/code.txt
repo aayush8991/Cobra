@@ -1,9 +1,9 @@
 let scores be {"math": 90, "science": 85, "history": 95} in
-    let avg be fun(m) is {
+    let avg be fun(m) is 
         let total be m."math" + m."science" + m."history" in
             total / 3
         end
-    } in
+     in
         avg(scores)
     end
 end

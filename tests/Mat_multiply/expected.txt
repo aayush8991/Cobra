@@ -1,0 +1,2 @@
+[[IntToken(v=Decimal('30')), IntToken(v=Decimal('24')), IntToken(v=Decimal('18'))], [IntToken(v=Decimal('84')), IntToken(v=Decimal('69')), IntToken(v=Decimal('54'))], [IntToken(v=Decimal('138')), IntToken(v=Decimal('114')), IntToken(v=Decimal('90'))]]
+Result: [[IntToken(v=Decimal('30')), IntToken(v=Decimal('24')), IntToken(v=Decimal('18'))], [IntToken(v=Decimal('84')), IntToken(v=Decimal('69')), IntToken(v=Decimal('54'))], [IntToken(v=Decimal('138')), IntToken(v=Decimal('114')), IntToken(v=Decimal('90'))]]

@@ -1,0 +1,2 @@
+[StringToken(v='A'), StringToken(v='a'), StringToken(v='y'), StringToken(v='u'), StringToken(v='s')]
+Result: [StringToken(v='A'), StringToken(v='a'), StringToken(v='y'), StringToken(v='u'), StringToken(v='s')]

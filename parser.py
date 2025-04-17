@@ -63,7 +63,7 @@ def parse(s: str) -> AST:
                         next(t)
                 expect(OperatorToken(')'))  
                 expect(KeywordToken("is"))
-                body = parse_braced_expr()
+                body = parse_statements()
                 return Fun(parameters, body)
             case _:
                 return parse_if()
@@ -90,7 +90,7 @@ def parse(s: str) -> AST:
                 expect(KeywordToken("do"))
                 body_expr = []
                 while t.peek(None) != KeywordToken("end"):
-                    body_expr.append(parse_braced_expr())
+                    body_expr.append(parse_statements())
                 expect(KeywordToken("end"))
                 return While(cond, body_expr)
             case _:
@@ -250,18 +250,36 @@ def parse(s: str) -> AST:
                 return Map(entries)
             case VariableToken(v):
                 var_name = next(t).v
+                # if t.peek(None) == OperatorToken('['):
+                #     # Array indexing
+                #     array_var = Var(var_name)
+                #     expect(OperatorToken('['))
+                #     index = parse_let()
+                #     expect(OperatorToken(']'))
+                #     if t.peek(None) == OperatorToken(':='):
+                #         # Array assignment
+                #         expect(OperatorToken(':='))
+                #         value = parse_let()
+                #         return ArrayAssign(array_var, index, value)
+                #     return ArrayIndex(array_var, index)
+
                 if t.peek(None) == OperatorToken('['):
-                    # Array indexing
+                    # Array indexing with support for multi-dimensional arrays
                     array_var = Var(var_name)
-                    expect(OperatorToken('['))
-                    index = parse_let()
-                    expect(OperatorToken(']'))
+                    indices = []
+                    # Collect all consecutive indices into a list
+                    while t.peek(None) == OperatorToken('['):
+                        expect(OperatorToken('['))
+                        indices.append(parse_let())
+                        expect(OperatorToken(']'))
+                    # Check if this is an assignment
                     if t.peek(None) == OperatorToken(':='):
-                        # Array assignment
                         expect(OperatorToken(':='))
                         value = parse_let()
-                        return ArrayAssign(array_var, index, value)
-                    return ArrayIndex(array_var, index)
+                        return ArrayAssign(array_var, indices, value)
+                    
+                    return ArrayIndex(array_var, indices)
+
                 if t.peek(None) == OperatorToken('('):
                     expect(OperatorToken('('))
                     args = []

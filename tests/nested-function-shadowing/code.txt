@@ -1,9 +1,9 @@
 let x be 5 in
-    let f be fun(y) is {
+    let f be fun(y) is 
         let x be 10 in
             x + y
         end
-    } in
+     in
         f(3)
     end
 end

@@ -1,5 +1,5 @@
-let multiply be fun(x, y) is { x * y } in
-    let double be fun(x) is { multiply(2, x) } in
+let multiply be fun(x, y) is  x * y  in
+    let double be fun(x) is  multiply(2, x)  in
         double(5)
     end
 end

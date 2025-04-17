@@ -1,9 +1,9 @@
 let myMap be {"x": 10, "y": 20} in
-    let updater be fun(m) is {
+    let updater be fun(m) is 
         m."x" := 100;
         m."y" := 200;
         m."x" + m."y"
-    } in
+     in
         updater(myMap)
     end
 end
