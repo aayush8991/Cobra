@@ -1,6 +1,7 @@
 from tree import *
 from lexer import *
 from decimal import Decimal
+import copy
 
 def lookup(env, v, i = None):
     for u, uv in reversed(env):
@@ -94,7 +95,8 @@ def e(tree: AST, stack=None):
             if size_value.v < 0:
                 raise ValueError("Array size cannot be negative")
             # Create a list of the specified size with the initial value
-            return [initial_value for _ in range(int(size_value.v))]
+            return [copy.deepcopy(initial_value) for _ in range(int(size_value.v))]
+        
         # case Fun(name, func_para, func_exp, func_body):   For normal function
         #     stack.append((name, (func_para, func_exp)))
         #     x = e(func_body, stack)
@@ -106,6 +108,7 @@ def e(tree: AST, stack=None):
         #     y = e(b, stack)
         #     stack.pop()
         #     return y
+        
         case Fun(parameters, body):
             return (parameters, body, stack.copy())
         case Call(func, args):
