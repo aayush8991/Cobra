@@ -1,7 +1,3 @@
-import sys
-import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 from eval import e
 from tree import BinOp
 from lexer import IntToken, FloatToken, StringToken, BoolToken
