@@ -6,11 +6,17 @@
 #define STACK_SIZE 1000
 #define ENV_SIZE 1000
 #define HEAP_SIZE 1000
+#define FUN_STACK_SIZE 1000
 
 typedef struct {
     int *data;
     int size;
 } Array;
+
+typedef struct {
+    size_t ip;
+    int env_size;
+} FunStack;
 
 int execute(uint8_t *insns) {
     size_t ip = 0;
@@ -20,8 +26,30 @@ int execute(uint8_t *insns) {
     Array *heap[HEAP_SIZE] = {NULL};
     int heap_size = 0;
 
-#define PUSH(x) (operand[top++] = (x))
-#define POP() (operand[--top])
+    FunStack fun_stack[FUN_STACK_SIZE];
+    int fun_top = 0;
+
+#define PUSH(x) do { \
+    if (top >= STACK_SIZE) { \
+        fprintf(stderr, "Stack overflow!\n"); \
+        exit(1); \
+    } \
+    operand[top++] = (x); \
+} while(0)
+
+#define POP() (top <= 0 ? (fprintf(stderr, "Stack underflow!\n"), exit(1), 0) : operand[--top])
+
+#define FUN_PUSH(ip_val, env_size_val) do { \
+    if (fun_top >= FUN_STACK_SIZE) { \
+        fprintf(stderr, "Function stack overflow!\n"); \
+        exit(1); \
+    } \
+    fun_stack[fun_top].ip = ip_val; \
+    fun_stack[fun_top].env_size = env_size_val; \
+    fun_top++; \
+} while(0)
+
+#define FUN_POP() (fun_top <= 0 ? (fprintf(stderr, "Function stack underflow!\n"), exit(1), (FunStack){0}) : fun_stack[--fun_top])
 
     int l, r;
     while (1) {
@@ -34,19 +62,29 @@ int execute(uint8_t *insns) {
                 PUSH(insns[ip+1]); 
                 break;
             case POP:
+                if (top <= 0) {  // Prevent underflow
+                    fprintf(stderr, "Stack underflow!\n");
+                    exit(1);
+                }
                 top--;
                 break;
             case ADD:
-                r = POP(); l = POP(); PUSH(l+r); 
+                r = POP(); l = POP(); PUSH(l + r); 
                 break;
             case SUB:
-                r = POP(); l = POP(); PUSH(l-r); 
+                r = POP(); l = POP(); PUSH(l - r); 
                 break;
             case MUL:
-                r = POP(); l = POP(); PUSH(l*r); 
+                r = POP(); l = POP(); PUSH(l * r); 
                 break;
             case DIV:
-                r = POP(); l = POP(); PUSH(l/r); 
+                r = POP(); 
+                if (r == 0) {  // Prevent division by zero
+                    fprintf(stderr, "Division by zero!\n");
+                    exit(1);
+                }
+                l = POP(); 
+                PUSH(l / r); 
                 break;
             case NEG:
                 l = POP(); PUSH(-l); 
@@ -70,17 +108,38 @@ int execute(uint8_t *insns) {
                 }
                 break;
             case LOAD:
+                if (insns[ip+1] >= ENV_SIZE) {  // Prevent out-of-bounds access
+                    fprintf(stderr, "Environment index out of bounds\n");
+                    exit(1);
+                }
                 PUSH(env[insns[ip+1]]); 
                 break;
             case STORE:
+                if (insns[ip+1] >= ENV_SIZE) {  // Prevent out-of-bounds access
+                    fprintf(stderr, "Environment index out of bounds\n");
+                    exit(1);
+                }
                 env[insns[ip+1]] = POP(); 
                 break;
             case ARRAY: {
                 int size = POP();
+                if (size <= 0 || heap_size >= HEAP_SIZE) {  // Prevent invalid array size or heap overflow
+                    fprintf(stderr, "Invalid array size or heap overflow\n");
+                    exit(1);
+                }
                 Array *arr = malloc(sizeof(Array));
+                if (!arr) {
+                    fprintf(stderr, "Heap allocation failed\n");
+                    exit(1);
+                }
                 arr->data = malloc(size * sizeof(int));
+                if (!arr->data) {
+                    fprintf(stderr, "Heap allocation failed\n");
+                    free(arr);
+                    exit(1);
+                }
                 arr->size = size;
-                for (int i = size-1; i >= 0; i--) {
+                for (int i = size - 1; i >= 0; i--) {
                     arr->data[i] = POP();
                 }
                 heap[heap_size] = arr;
@@ -90,8 +149,12 @@ int execute(uint8_t *insns) {
             case ALOAD: {
                 int index = POP();
                 int array_id = POP();
+                if (array_id < 0 || array_id >= heap_size || !heap[array_id]) {  // Prevent invalid array access
+                    fprintf(stderr, "Invalid array ID\n");
+                    exit(1);
+                }
                 Array *arr = heap[array_id];
-                if (index < 0 || index >= arr->size) {
+                if (index < 0 || index >= arr->size) {  // Prevent out-of-bounds access
                     fprintf(stderr, "Array index out of bounds\n");
                     exit(1);
                 }
@@ -102,8 +165,12 @@ int execute(uint8_t *insns) {
                 int value = POP();
                 int index = POP();
                 int array_id = POP();
+                if (array_id < 0 || array_id >= heap_size || !heap[array_id]) {  // Prevent invalid array access
+                    fprintf(stderr, "Invalid array ID\n");
+                    exit(1);
+                }
                 Array *arr = heap[array_id];
-                if (index < 0 || index >= arr->size) {
+                if (index < 0 || index >= arr->size) {  // Prevent out-of-bounds access
                     fprintf(stderr, "Array index out of bounds\n");
                     exit(1);
                 }
@@ -114,21 +181,29 @@ int execute(uint8_t *insns) {
             case CALL: {
                 int func_addr = POP();
                 int num_args = POP();
-                // Save current environment and IP
-                PUSH(ip + 2);
-                PUSH(env_size);
+                if (func_addr < 0 || num_args < 0 || env_size + num_args >= ENV_SIZE) {  // Prevent invalid function call
+                    fprintf(stderr, "Invalid function call\n");
+                    exit(1);
+                }
+                // Save current environment and IP to function stack
+                FUN_PUSH(ip + 2, env_size);
                 // Set up new environment with arguments
                 for (int i = 0; i < num_args; i++) {
                     env[env_size++] = POP();
                 }
-                ip = func_addr;
+                ip = func_addr;  // Jump to the function address
                 continue;
             }
             case RET: {
-                int return_value = POP();
-                env_size = POP();
-                ip = POP();
-                PUSH(return_value);
+                if (top < 2) {  // Prevent underflow during return
+                    fprintf(stderr, "Stack underflow during return\n");
+                    exit(1);
+                }
+                int return_value = POP();  // Pop return value
+                FunStack state = FUN_POP();  // Restore state from function stack
+                env_size = state.env_size;
+                ip = state.ip;
+                PUSH(return_value);  // Push return value to the operand stack
                 continue;
             }
         }
@@ -145,92 +220,6 @@ end:
     return POP();
 #undef PUSH
 #undef POP
+#undef FUN_PUSH
+#undef FUN_POP
 }
-
-// Test program
-int main() {
-    // Example: Create array [1,2,3], set arr[1] = 10, return arr[1]
-    uint8_t insns[] = {
-        // 0x01, 1,
-        // 0x01, 2,
-        // 0x01, 3,
-        // 0x01, 3,  // array size
-        // 0x11, 0,
-        // 0x01, 0,  // array_id
-        // 0x01, 1,  // index
-        // 0x01, 10, // new value
-        // 0x13, 0,
-        // 0x01, 0,  // array_id
-        // 0x01, 1,  // index
-        // 0x12, 0,
-        // 0x00, 0
-
-        0x01, 0x00,  // PUSH 0       - Initialize i = 0
-        0x0E, 0x00,  // STORE 0      - Store to variable 0
-        
-        // Loop start (byte 4)
-        0x0D, 0x00,  // LOAD 0       - Load i
-        0x01, 0x05,  // PUSH 5       - Load 5
-        0x09, 0x00,  // LT 0         - Compare i < 5
-        0x0C, 0x16,  // JMPF 22      - If false jump to end (byte 22)
-        
-        // Loop body
-        0x0D, 0x00,  // LOAD 0       - Load i
-        0x01, 0x01,  // PUSH 1       - Push 1
-        0x03, 0x00,  // ADD 0        - i + 1
-        0x0E, 0x00,  // STORE 0      - i = i + 1
-        
-        0x0B, 0x04,  // JMP 4        - Jump back to loop start (byte 4)
-        
-        // End of loop (byte 22)
-        0x0D, 0x00,  // LOAD 0       - Load final value of i (should be 5)
-        0x00, 0x00   // HALT    
-    };
-    
-    printf("Result: %d\n", execute(insns));
-    return 0;
-}
-
-// int main() {
-//     FILE *fp;
-//     long file_size;
-//     uint8_t *buffer;
-
-//     // Open the binary file
-//     printf("Hi\n");
-//     fp = fopen("program.bin", "rb");
-//     if (!fp) {
-//         fprintf(stderr, "Could not open program.bin\n");
-//         return 1;
-//     }
-
-//     // Get file size
-//     fseek(fp, 0, SEEK_END);
-//     file_size = ftell(fp);
-//     rewind(fp);
-
-//     // Allocate memory for the bytecode
-//     buffer = (uint8_t*)malloc(file_size);
-//     if (!buffer) {
-//         fprintf(stderr, "Memory allocation failed\n");
-//         fclose(fp);
-//         return 1;
-//     }
-
-//     // Read the bytecode
-//     if (fread(buffer, 1, file_size, fp) != file_size) {
-//         fprintf(stderr, "Failed to read program.bin\n");
-//         free(buffer);
-//         fclose(fp);
-//         return 1;
-//     }
-
-//     fclose(fp);
-
-//     // Execute the bytecode
-//     int result = execute(buffer);
-//     printf("Result: %d\n", result);
-
-//     free(buffer);
-//     return 0;
-// }
