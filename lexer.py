@@ -37,7 +37,7 @@ class OperatorToken(Token):
 class VariableToken(Token):
     v: str
 
-keywords = ["if", "then", "else", "end", "let", "in", "be", "while", "do", "fun", "is", "input", "and", "or", "not", "print"]
+keywords = ["if", "then", "else", "end", "let", "in", "be", "while", "do", "fun", "is", "input", "and", "or", "not", "print", "sort"]
 
 def lex(s: str) -> Iterator[Token]:
     i = 0

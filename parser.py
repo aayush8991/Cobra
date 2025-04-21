@@ -308,6 +308,12 @@ def parse(s: str) -> AST:
                 prompt = parse_let()
                 expect(OperatorToken(')'))
                 return Input(prompt)
+            case KeywordToken("sort"):
+                next(t)
+                expect(OperatorToken('('))
+                array = parse_let()
+                expect(OperatorToken(')'))
+                return Sort(array)
             case _:
                 raise ValueError("Unexpected token in expression")
 

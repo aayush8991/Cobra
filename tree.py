@@ -119,3 +119,8 @@ class ArrayInit(AST):
 class Print(AST):
     value: AST
     _fields = ('value',)
+
+@dataclass
+class Sort(AST):
+    array: AST
+    _fields = ('array',)

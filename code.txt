@@ -1,3 +1,9 @@
-let a be [1, 2, 3, 4] in
-    a[2]
+let a be [3, 1, 4, 2] in
+    sort(a);
+    let i be 0 in 
+        while {i < 4} do
+            print(a[i]);
+            i := i + 1
+        end
+    end
 end

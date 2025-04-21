@@ -238,6 +238,21 @@ def e(tree: AST, stack=None):
             else:
                 print(result)  
             return result
+        case Sort(array):
+            arr = e(array, stack)
+            if not isinstance(arr, list):
+                raise TypeError("sort() can only be used on arrays")
+            def get_sort_key(item):
+                if isinstance(item, (IntToken, FloatToken)):
+                    return item.v
+                elif isinstance(item, StringToken):
+                    return item.v
+                elif isinstance(item, BoolToken):
+                    return item.v
+                return item
+            
+            arr.sort(key=get_sort_key)
+            return arr
         case _:
             raise ValueError(f"Unknown AST node := {tree}")
 

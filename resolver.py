@@ -140,6 +140,8 @@ def resolve(t: AST, env = None, fresh = None) -> AST:
             )
         case Print(value):
             return Print(resolve(value, env, fresh))
+        case Sort(array):
+            return Sort(resolve(array, env, fresh))
         case _:
             return t
         
