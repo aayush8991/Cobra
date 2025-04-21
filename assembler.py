@@ -140,16 +140,39 @@ def codegen(t):
 if __name__ == "__main__":
     # Example usage
     expr = Let(
-            v=Var(v="add", i=None),
-            e=Fun(
-                parameters=[Var(v="a", i=None), Var(v="b", i=None)],
-                body=BinOp(op="+", left=Var(v="a", i=None), right=Var(v="b", i=None))
-            ),
-            f=Let(
-                v=Var(v="result", i=None),
-                e=Call(func=Var(v="add", i=None), args=[IntToken(v=Decimal("1")), IntToken(v=Decimal("2"))]),
-                f=Call(func=Var(v="add", i=None), args=[Var(v="result", i=None), IntToken(v=Decimal("3"))])
+        v = Var(v="i", i=None),
+        e = IntToken(v=Decimal("0")),  # Initialize i = 0
+        f = Let(
+            v = Var(v="loop_condition", i=None),
+            e = BinOp(
+                op = "<", 
+                left = Var(v="i", i=None), 
+                right = IntToken(v=Decimal("5"))
+            ),  # Check if i < 5
+            f = If(
+                cond = Var(v="loop_condition", i=None),
+                then = Let(
+                    v = Var(v="new_i", i=None),
+                    e = BinOp(
+                        op = "+",
+                        left = Var(v="i", i=None),  # Increment i by 1
+                        right = IntToken(v=Decimal("1"))
+                    ),
+                    f = Let(
+                        v = Var(v="i", i=None),
+                        e = Var(v="new_i", i=None),
+                        f = Call(
+                            func = Var(v="i", i=None),  # No function call needed, just assignment
+                            args = [Var(v="i", i=None)]  # Pass i to itself
+                        )
+                    )
+                ),
+                else_ = Assign(
+                    var = Var(v="i", i=None),
+                    expr = IntToken(v=Decimal("5"))  # Assign i = 5 to break the loop
+                ),
             )
         )
+    )
     bytecode = codegen(expr)
-    print(list(bytecode))
+    print(bytecode)
