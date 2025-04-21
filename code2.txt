@@ -1,0 +1,30 @@
+let a be [1, 2, 3, 4] in
+    let binarysearch be fun(arr, target) is
+        let found be -1 in 
+            let low be 0 in
+                let high be 3 in
+                    while {low <= high} do
+                        let mid be 0 in
+                            mid := (high + low) // 2;
+                            if {arr[mid] == target} then
+                                found := mid;
+                                high := 0;
+                                low := 1
+                            else
+                                if {arr[mid] < target} then
+                                    low := mid + 1
+                                else
+                                    high := mid - 1
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    in 
+        let x be 0 in 
+            x := binarysearch(a, 4)
+        end
+    end
+end

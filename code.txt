@@ -1,9 +1,10 @@
-let a be [3, 1, 4, 2] in
-    sort(a);
-    let i be 0 in 
-        while {i < 4} do
-            print(a[i]);
-            i := i + 1
+let a be 0 in
+    let b be 1 in
+        if {true and false}
+        then 
+            print("HELLO")
+        else
+            print("HI")
         end
     end
 end

@@ -1,1 +1,74 @@
-Enter your name: 
+Traceback (most recent call last):
+  File "/home/aayush/CS327 Compilers/Cobra/helper.py", line 25, in <module>
+    main()
+  File "/home/aayush/CS327 Compilers/Cobra/helper.py", line 19, in main
+    ast = parse(code)
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 332, in parse
+    result = parse_print()
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 38, in parse_print
+    return parse_let()
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 48, in parse_let
+    f = parse_statements()  # Change from parse_let to parse_statements
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 21, in parse_statements
+    statements = [parse_print()]
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 38, in parse_print
+    return parse_let()
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 48, in parse_let
+    f = parse_statements()  # Change from parse_let to parse_statements
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 21, in parse_statements
+    statements = [parse_print()]
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 38, in parse_print
+    return parse_let()
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 48, in parse_let
+    f = parse_statements()  # Change from parse_let to parse_statements
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 21, in parse_statements
+    statements = [parse_print()]
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 38, in parse_print
+    return parse_let()
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 48, in parse_let
+    f = parse_statements()  # Change from parse_let to parse_statements
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 21, in parse_statements
+    statements = [parse_print()]
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 38, in parse_print
+    return parse_let()
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 52, in parse_let
+    return parse_fun()
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 69, in parse_fun
+    return parse_if()
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 77, in parse_if
+    then = parse_statements()
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 21, in parse_statements
+    statements = [parse_print()]
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 38, in parse_print
+    return parse_let()
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 52, in parse_let
+    return parse_fun()
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 69, in parse_fun
+    return parse_if()
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 83, in parse_if
+    return parse_while()
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 97, in parse_while
+    return parse_or()
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 100, in parse_or
+    ast = parse_and()
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 110, in parse_and
+    ast = parse_cmp()
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 120, in parse_cmp
+    l = parse_sub()
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 149, in parse_sub
+    ast = parse_add()
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 159, in parse_add
+    ast = parse_mul()
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 169, in parse_mul
+    ast = parse_div()
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 179, in parse_div
+    ast = parse_mod()
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 190, in parse_mod
+    ast = parse_pow()
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 198, in parse_pow
+    ast = parse_atom()
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 255, in parse_atom
+    expect(OperatorToken(':'))
+  File "/home/aayush/CS327 Compilers/Cobra/parser.py", line 12, in expect
+    raise ParseError
+lexer.ParseError

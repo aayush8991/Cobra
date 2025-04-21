@@ -1,9 +1,9 @@
 let a be 10 in
     let b be 20 in
         if {a < b} then
-            {"a is less than b"}
+            "a is less than b"
         else
-            {"a is not less than b"}
+            "a is not less than b"
         end
     end
 end
