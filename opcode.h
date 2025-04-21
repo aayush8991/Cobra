@@ -1,6 +1,5 @@
 enum opcode {
     HALT = 0,    // Stop execution
-    // NOP = 1,     // No operation
     PUSH = 1,    // Push value onto stack
     POP = 2,     // Pop value from stack
     ADD = 3,     // Add top two values
@@ -19,6 +18,14 @@ enum opcode {
     RET = 16,    // Return from function
     ARRAY = 17,  // Create array
     ALOAD = 18,  // Load from array
-    ASTORE = 19,  // Store in array
-    NOP = 20,     // No operation
+    ASTORE = 19, // Store in array
+    NOP = 20,    // No operation
+    MOD = 21,    // Modulo operation
+    PRINT = 22,  // Print value on stack
+    INPUT = 23,  // Read input from user
+    STRLOAD = 24,// Load character from string
+    STRSTORE = 25,// Store character in string
+    MAPNEW = 26, // Create new map
+    MAPGET = 27, // Get value from map
+    MAPSET = 28, // Set value in map
 };

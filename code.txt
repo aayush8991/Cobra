@@ -1,11 +1,11 @@
-let name be input("") in
-    let lis be [(0, 5)] in
-        let i be 0 in 
-            while {i < 5} do
-                lis[i] := name[i]
-                i := i + 1
-            end
-        end;
-        print(lis)
+let a be [1, 2, 3, 4] in
+    let i be 0 in 
+        while {i < 4} do
+            if {a[i] == 4}
+            then {1}
+            else {0}
+            end;
+            i := i + 1
+        end
     end
 end
