@@ -1,3 +1,0 @@
-let a be "Hello" in 
-    a
-end
