@@ -74,9 +74,9 @@ def parse(s: str) -> AST:
                 next(t)
                 cond = parse_braced_expr()
                 expect(KeywordToken("then"))
-                then = parse_braced_expr()
+                then = parse_statements()
                 expect(KeywordToken("else"))
-                else_ = parse_braced_expr()
+                else_ = parse_statements()
                 expect(KeywordToken("end"))
                 return If(cond, then, else_)
             case _:
@@ -122,10 +122,18 @@ def parse(s: str) -> AST:
             next(t)
             r = parse_sub()
             return BinOp('<', l, r)
+        elif t.peek(None) == OperatorToken('<='):
+            next(t)
+            r = parse_sub()
+            return BinOp('<=', l, r)
         elif t.peek(None) == OperatorToken('>'):
             next(t)
             r = parse_sub()
             return BinOp('>', l, r)
+        elif t.peek(None) == OperatorToken('>='):
+            next(t)
+            r = parse_sub()
+            return BinOp('>=', l, r)
         elif t.peek(None) == OperatorToken('=='):
             next(t)
             r = parse_sub()
@@ -170,6 +178,9 @@ def parse(s: str) -> AST:
     def parse_div():
         ast = parse_mod()
         match t.peek(None):
+            case OperatorToken('//'):
+                next(t)
+                ast = BinOp("//", ast, parse_mod())
             case OperatorToken('/'):
                 next(t)
                 ast = BinOp("/", ast, parse_mod())
@@ -315,6 +326,7 @@ def parse(s: str) -> AST:
                 expect(OperatorToken(')'))
                 return Sort(array)
             case _:
+                print(t.peek(None))
                 raise ValueError("Unexpected token in expression")
 
     result = parse_print()

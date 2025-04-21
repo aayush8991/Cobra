@@ -272,6 +272,24 @@ def eval_math(tree: BinOp, stack):
         right_val = right
 
     match tree.op:
+        case ">=":
+            if isinstance(left, (IntToken, FloatToken)) and isinstance(right, (IntToken, FloatToken)):
+                return BoolToken(Decimal(left.v) >= Decimal(right.v))
+            else:
+                raise TypeError(f"Invalid operation: {type(left).__name__} >= {type(right).__name__}")
+        case "<=":
+            if isinstance(left, (IntToken, FloatToken)) and isinstance(right, (IntToken, FloatToken)):
+                return BoolToken(Decimal(left.v) <= Decimal(right.v))
+            else:
+                raise TypeError(f"Invalid operation: {type(left).__name__} <= {type(right).__name__}")
+        case "//":
+            if isinstance(left, (IntToken, FloatToken)) and isinstance(right, (IntToken, FloatToken)):
+                if right.v == 0:
+                    raise ZeroDivisionError("Floor division by zero")
+                # Floor division returns an integer
+                return IntToken(left.v // right.v)
+            else:
+                raise TypeError(f"Invalid operation: {type(left).__name__} // {type(right).__name__}")
         case "or":
             if isinstance(left, (IntToken, BoolToken)) and isinstance(right, (IntToken, BoolToken)):
                 left_val = left.v if isinstance(left, IntToken) else int(left.v)

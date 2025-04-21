@@ -89,9 +89,47 @@ def lex(s: str) -> Iterator[Token]:
 
         else:
             match t := s[i]:
-                case '+' | '*' | '-' | '/' | '^' | '(' | ')' | '<' | '>' | '{' | '}' | ',' | '[' | ']' | '.' | ';' | '%':
+                case '+' | '*' | '^' | '(' | ')' | '{' | '}' | ',' | '[' | ']' | '.' | ';' | '%':
                     i = i + 1
                     yield OperatorToken(t)
+                case '-':
+                    if i + 1 < len(s) and s[i + 1].isdigit():
+                        i = i + 1  
+                        t = s[i]
+                        i = i + 1
+                        while i < len(s) and (s[i].isdigit() or s[i] == '.'):
+                            if s[i] == '.' and '.' in t:  
+                                break
+                            t = t + s[i]
+                            i = i + 1
+                        if '.' in t:
+                            yield FloatToken(-Decimal(t))
+                        else:
+                            yield IntToken(-Decimal(t))
+                    else:
+                        i = i + 1
+                        yield OperatorToken(t)
+                case '<':
+                    if i + 1 < len(s) and s[i + 1] == '=':
+                        i = i + 2
+                        yield OperatorToken('<=')
+                    else:
+                        i = i + 1
+                        yield OperatorToken('<')
+                case '>':
+                    if i + 1 < len(s) and s[i + 1] == '=':
+                        i = i + 2
+                        yield OperatorToken('>=')
+                    else:
+                        i = i + 1
+                        yield OperatorToken('>')
+                case '/':
+                    if i + 1 < len(s) and s[i + 1] == '/':
+                        i = i + 2
+                        yield OperatorToken('//')
+                    else:
+                        i = i + 1
+                        yield OperatorToken('/')
                 case '=':
                     if i + 1 < len(s) and s[i + 1] == '=':
                         i = i + 2
