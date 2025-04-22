@@ -8,10 +8,10 @@ Welcome to Cobra, a powerful and expressive programming language that combines d
 | Lexer                      | ✅ Completed               |
 | Parser                     | ✅ Completed               |
 | AST Generation             | ✅ Completed               |
-| Type Checking              | ⏳ Partial Implementation  |
+| Type Checking              | ✅ Completed               |
 | Bytecode Generation (C)    | ✅ Completed               |
-| Virtual Machine            | ⏳ In Progress             |
-| Standard Library           | ⏳ Basic Features Implemented |
+| Virtual Machine            | ✅ Completed               |
+| Standard Library           | ✅ Completed               |
 
 
 # Components Implemented

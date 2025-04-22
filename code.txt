@@ -1,10 +1,13 @@
-let a be 0 in
-    let b be 1 in
-        if {true and false}
+let a be input("Number") in
+    if {a > 0} 
+    then 
+        print("Greater than 0")
+    else
+        if {a == 0}
         then 
-            print("HELLO")
+            print("Equal to 0")
         else
-            print("HI")
+            print("Less")
         end
     end
 end
